@@ -1,0 +1,67 @@
+.login-container {
+  height: 100vh;
+  background-color: #d3d3d3;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-card {
+  background: #f5f5f5;
+  padding: 30px;
+  border-radius: 20px;
+  width: 320px;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* INPUTS */
+.login-card input {
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0;
+  border-radius: 10px;
+  border: none;
+  background-color: #a9c6df;
+  box-sizing: border-box;
+  font-size: 14px;
+}
+
+/* BOTÃO */
+.login-card button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 10px;
+  border: none;
+  border-radius: 10px;
+  background-color: #0d9488;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.login-card button:hover {
+  background-color: #0b7f75;
+}
+
+/* MENSAGEM DE ERRO */
+.erro {
+  color: red;
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+.login-card input:focus {
+  outline: none;
+  background-color: #a9c6df;
+}
+
+.login-card input:not(:focus) {
+  background-color: #a9c6df;
+}
+
+input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 1000px #a9c6df inset !important;
+  -webkit-text-fill-color: #000 !important;
+}

@@ -1,0 +1,59 @@
+<div class="container">
+  <div class="card">
+    <div class="form-grid">
+      <div class="coluna">
+        <h3>👤 Dados do tutor</h3>
+
+        <input
+          placeholder="Nome completo"
+          [(ngModel)]="nome"
+          (input)="somenteTexto($event)"
+        />
+
+        <input
+          placeholder="CPF"
+          [(ngModel)]="cpf"
+          maxlength="14"
+          (input)="formatarCpf()"
+        />
+
+        <input
+          placeholder="Telefone"
+          [(ngModel)]="telefone"
+          maxlength="15"
+          (input)="formatarTelefone()"
+        />
+
+        <input placeholder="Endereço" />
+
+        <div class="linha">
+          <input placeholder="Número" />
+          <input placeholder="CEP" />
+        </div>
+      </div>
+
+      <div class="coluna">
+        <h3>🐾 Dados do animal</h3>
+
+        <input placeholder="Nome do animal" (input)="somenteTexto($event)" />
+        <input placeholder="Espécie" (input)="somenteTexto($event)" />
+        <input placeholder="Raça" (input)="somenteTexto($event)" />
+
+        <div class="linha">
+          <input placeholder="Idade" />
+          <input placeholder="Sexo" (input)="somenteTexto($event)" />
+        </div>
+
+        <input placeholder="Peso" />
+      </div>
+    </div>
+
+    <div class="acoes">
+      <button class="cancelar">Cancelar</button>
+      <button class="salvar" (click)="salvar()">Salvar Cadastro</button>
+    </div>
+
+    <p class="erro" *ngIf="erro">{{ erro }}</p>
+    <p class="sucesso" *ngIf="sucesso">{{ sucesso }}</p>
+  </div>
+</div>

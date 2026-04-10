@@ -1,0 +1,24 @@
+<div class="login-container">
+  <div class="login-card">
+    <h2>🐾 SaúdePet Clinic</h2>
+
+    <input
+      type="text"
+      placeholder="CNPJ"
+      [(ngModel)]="cnpj"
+      name="cnpj"
+      (input)="formatarCnpj()"
+    />
+
+    <input
+      type="password"
+      placeholder="Senha"
+      [(ngModel)]="senha"
+      name="senha"
+    />
+
+    <button (click)="login()">Entrar</button>
+
+    <p *ngIf="erro" class="erro">{{ erro }}</p>
+  </div>
+</div>

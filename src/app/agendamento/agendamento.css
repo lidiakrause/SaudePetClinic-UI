@@ -1,0 +1,41 @@
+.container {
+  padding: 40px;
+}
+
+.topo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.novo {
+  padding: 10px 20px;
+  border-radius: 20px;
+  border: none;
+  background-color: #0d9488;
+  color: white;
+  cursor: pointer;
+}
+
+.tabela {
+  background-color: #d9d9d9;
+  border-radius: 20px;
+  padding: 10px;
+}
+
+.linha {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 20px;
+}
+
+.header {
+  font-weight: bold;
+  background-color: #cfcfcf;
+}
+
+.linha span {
+  width: 20%;
+  text-align: center;
+}

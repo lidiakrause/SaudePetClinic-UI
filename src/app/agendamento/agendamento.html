@@ -1,0 +1,25 @@
+<div class="container">
+  <div class="topo">
+    <h2>Agendamentos</h2>
+
+    <button class="novo" routerLink="/agendamentos">+ Novo Agendamento</button>
+  </div>
+
+  <div class="tabela">
+    <div class="linha header">
+      <span>Tutor</span>
+      <span>Animal</span>
+      <span>Data</span>
+      <span>Hora</span>
+      <span>Status</span>
+    </div>
+
+    <div class="linha" *ngFor="let a of agendamentos">
+      <span>{{ a.tutor }}</span>
+      <span>{{ a.animal }}</span>
+      <span>{{ a.data }}</span>
+      <span>{{ a.hora }}</span>
+      <span>{{ a.status }}</span>
+    </div>
+  </div>
+</div>
