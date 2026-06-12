@@ -1,24 +1,38 @@
-<div class="login-container">
+<div class="login-wrapper">
+
   <div class="login-card">
-    <h2>🐾 SaúdePet Clinic</h2>
 
-    <input
-      type="text"
-      placeholder="CNPJ"
-      [(ngModel)]="cnpj"
-      name="cnpj"
-      (input)="formatarCnpj()"
-    />
+    <div class="login-logo">
+      <span>🐾</span>
+      <h1>SaúdePet <strong>Clinic</strong></h1>
+    </div>
 
-    <input
-      type="password"
-      placeholder="Senha"
-      [(ngModel)]="senha"
-      name="senha"
-    />
+    <div class="campo">
+      <label>CNPJ</label>
+      <input
+        type="text"
+        [(ngModel)]="cnpj"
+        (input)="formatarCnpj()"
+        placeholder="00.000.000/0001-00"
+        autocomplete="username"
+      >
+    </div>
 
-    <button (click)="login()">Entrar</button>
+    <div class="campo">
+      <label>Senha</label>
+      <input
+        type="password"
+        [(ngModel)]="senha"
+        placeholder="••••••••"
+        autocomplete="current-password"
+        (keyup.enter)="login()"
+      >
+    </div>
 
-    <p *ngIf="erro" class="erro">{{ erro }}</p>
+    <p class="msg-erro" *ngIf="erro">{{ erro }}</p>
+
+    <button class="btn-primary" (click)="login()">Entrar</button>
+
   </div>
+
 </div>

@@ -1,59 +1,78 @@
-<div class="container">
-  <div class="card">
-    <div class="form-grid">
-      <div class="coluna">
-        <h3>👤 Dados do tutor</h3>
+<div class="page-layout">
 
-        <input
-          placeholder="Nome completo"
-          [(ngModel)]="nome"
-          (input)="somenteTexto($event)"
-        />
+  <aside class="sidebar">
+    <div class="sidebar-logo">🐾 SaúdePet</div>
+    <nav class="sidebar-nav">
+      <a routerLink="/home" routerLinkActive="active">Home</a>
+      <a routerLink="/tutor" routerLinkActive="active">Tutores</a>
+      <a routerLink="/animal" routerLinkActive="active">Animais</a>
+      <a routerLink="/agendamento" routerLinkActive="active">Agendamentos</a>
+    </nav>
+  </aside>
 
-        <input
-          placeholder="CPF"
-          [(ngModel)]="cpf"
-          maxlength="14"
-          (input)="formatarCpf()"
-        />
+  <main class="page-content">
 
-        <input
-          placeholder="Telefone"
-          [(ngModel)]="telefone"
-          maxlength="15"
-          (input)="formatarTelefone()"
-        />
+    <header class="page-header">
+      <h1>Tutores</h1>
+      <p>Cadastro de responsáveis pelos animais.</p>
+    </header>
 
-        <input placeholder="Endereço" />
+    <section class="card">
+      <h2>Novo tutor</h2>
 
-        <div class="linha">
-          <input placeholder="Número" />
-          <input placeholder="CEP" />
-        </div>
-      </div>
+      <div class="form-grid">
 
-      <div class="coluna">
-        <h3>🐾 Dados do animal</h3>
-
-        <input placeholder="Nome do animal" (input)="somenteTexto($event)" />
-        <input placeholder="Espécie" (input)="somenteTexto($event)" />
-        <input placeholder="Raça" (input)="somenteTexto($event)" />
-
-        <div class="linha">
-          <input placeholder="Idade" />
-          <input placeholder="Sexo" (input)="somenteTexto($event)" />
+        <div class="campo">
+          <label>Nome completo</label>
+          <input type="text" [(ngModel)]="nome" placeholder="João Silva">
         </div>
 
-        <input placeholder="Peso" />
+        <div class="campo">
+          <label>Telefone</label>
+          <input type="text" [(ngModel)]="telefone" (input)="formatarTelefone()" placeholder="(45) 99999-9999">
+        </div>
+
+        <div class="campo campo-full">
+          <label>E-mail</label>
+          <input type="email" [(ngModel)]="email" placeholder="joao@email.com">
+        </div>
+
       </div>
-    </div>
 
-    <div class="acoes">
-      <button class="cancelar">Cancelar</button>
-      <button class="salvar" (click)="salvar()">Salvar Cadastro</button>
-    </div>
+      <div class="form-actions">
+        <button class="btn-primary" (click)="salvar()" [disabled]="carregando">
+          {{ carregando ? 'Salvando…' : 'Salvar tutor' }}
+        </button>
+      </div>
 
-    <p class="erro" *ngIf="erro">{{ erro }}</p>
-    <p class="sucesso" *ngIf="sucesso">{{ sucesso }}</p>
-  </div>
+      <p class="msg-erro" *ngIf="erro">{{ erro }}</p>
+      <p class="msg-sucesso" *ngIf="sucesso">{{ sucesso }}</p>
+    </section>
+
+    <section class="card">
+      <h2>Tutores cadastrados</h2>
+
+      <div class="vazio" *ngIf="tutores.length === 0">
+        Nenhum tutor cadastrado ainda.
+      </div>
+
+      <table *ngIf="tutores.length > 0">
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>Telefone</th>
+            <th>E-mail</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let t of tutores">
+            <td>{{ t.nome }}</td>
+            <td>{{ t.telefone }}</td>
+            <td>{{ t.email }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+  </main>
 </div>

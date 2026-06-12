@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -9,4 +9,16 @@ import { RouterModule } from '@angular/router';
   templateUrl: './home.html',
   styleUrls: ['./home.css'],
 })
-export class HomeComponent {}
+export class HomeComponent {
+
+  constructor(private router: Router) {
+    if (!localStorage.getItem('usuario')) {
+      this.router.navigate(['/login']);
+    }
+  }
+
+  logout(): void {
+    localStorage.removeItem('usuario');
+    this.router.navigate(['/login']);
+  }
+}

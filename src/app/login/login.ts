@@ -1,7 +1,7 @@
-import { Router } from '@angular/router';
 import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -11,40 +11,41 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./login.css'],
 })
 export class LoginComponent {
-  cnpj: string = '';
-  senha: string = '';
-  erro: string = '';
+
+  cnpj = '';
+  senha = '';
+  erro = '';
+
+  // Credenciais de teste — substitua pela autenticação real quando disponível
+  private readonly CNPJ_TESTE = '12345678000126';
+  private readonly SENHA_TESTE = 'Cachorro.26';
 
   constructor(private router: Router) {}
 
-  login() {
-    if (!this.cnpj || !this.senha) {
-      this.erro = 'Preencha todos os campos';
-      return;
-    }
+  login(): void {
+    this.erro = '';
 
     const cnpjLimpo = this.cnpj.replace(/\D/g, '');
 
-    if (cnpjLimpo === '12345678000126' && this.senha === 'Cachorro.26') {
-      this.erro = '';
+    if (!cnpjLimpo || !this.senha) {
+      this.erro = 'Preencha todos os campos.';
+      return;
+    }
+
+    if (cnpjLimpo === this.CNPJ_TESTE && this.senha === this.SENHA_TESTE) {
+      localStorage.setItem('usuario', JSON.stringify({ cnpj: cnpjLimpo }));
       this.router.navigate(['/home']);
     } else {
-      this.erro = 'Credenciais inválidas';
+      this.erro = 'CNPJ ou senha inválidos.';
     }
   }
 
-  formatarCnpj() {
-    let cnpj = this.cnpj.replace(/\D/g, '');
-
-    if (cnpj.length > 14) {
-      cnpj = cnpj.substring(0, 14);
-    }
-
-    cnpj = cnpj.replace(/^(\d{2})(\d)/, '$1.$2');
-    cnpj = cnpj.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3');
-    cnpj = cnpj.replace(/\.(\d{3})(\d)/, '.$1/$2');
-    cnpj = cnpj.replace(/(\d{4})(\d)/, '$1-$2');
-
-    this.cnpj = cnpj;
+  formatarCnpj(): void {
+    let c = this.cnpj.replace(/\D/g, '').slice(0, 14);
+    c = c.replace(/^(\d{2})(\d)/, '$1.$2');
+    c = c.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3');
+    c = c.replace(/\.(\d{3})(\d)/, '.$1/$2');
+    c = c.replace(/(\d{4})(\d)/, '$1-$2');
+    this.cnpj = c;
   }
 }

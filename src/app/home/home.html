@@ -1,35 +1,37 @@
-<div class="navbar">
-  <span class="logo">🐾 SaúdePet Clinic</span>
+<div class="page-layout">
 
-  <div class="menu">
-    <a routerLink="/home">Home</a>
-    <a>Agendamentos</a>
-    <a>Cadastros</a>
-    <a>Fila de Espera</a>
-    <a>Relatório</a>
-  </div>
-</div>
+  <aside class="sidebar">
+    <div class="sidebar-logo">🐾 SaúdePet</div>
+    <nav class="sidebar-nav">
+      <a routerLink="/home" routerLinkActive="active">Home</a>
+      <a routerLink="/tutor" routerLinkActive="active">Tutores</a>
+      <a routerLink="/animal" routerLinkActive="active">Animais</a>
+      <a routerLink="/agendamento" routerLinkActive="active">Agendamentos</a>
+    </nav>
+    <button class="btn-sair" (click)="logout()">Sair</button>
+  </aside>
 
-<div class="home-container">
-  <div class="topo">
-    <div class="botao-central">Agendamentos de hoje</div>
-  </div>
+  <main class="page-content">
 
-  <div class="meio">
-    <div class="box">Próximas vagas disponíveis</div>
+    <header class="page-header">
+      <h1>Bem-vindo</h1>
+      <p>Sistema de Gestão — SaúdePet Clinic</p>
+    </header>
 
-    <div class="box">
-      <div>Fila de espera</div>
-      <p>Fila</p>
-      <strong>0</strong>
+    <div class="atalhos">
+      <a routerLink="/tutor" class="atalho-card">
+        <span class="atalho-icon">👤</span>
+        <span>Cadastrar tutor</span>
+      </a>
+      <a routerLink="/animal" class="atalho-card">
+        <span class="atalho-icon">🐶</span>
+        <span>Cadastrar animal</span>
+      </a>
+      <a routerLink="/agendamento" class="atalho-card">
+        <span class="atalho-icon">📅</span>
+        <span>Novo agendamento</span>
+      </a>
     </div>
-  </div>
 
-  <div class="acoes">
-    <button class="principal" routerLink="/tutor">
-      Cadastrar tutor/animal
-    </button>
-
-    <button class="secundario">Novo agendamento</button>
-  </div>
+  </main>
 </div>

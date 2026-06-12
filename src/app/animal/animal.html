@@ -1,0 +1,100 @@
+<div class="page-layout">
+
+  <aside class="sidebar">
+    <div class="sidebar-logo">🐾 SaúdePet</div>
+    <nav class="sidebar-nav">
+      <a routerLink="/home" routerLinkActive="active">Home</a>
+      <a routerLink="/tutor" routerLinkActive="active">Tutores</a>
+      <a routerLink="/animal" routerLinkActive="active">Animais</a>
+      <a routerLink="/agendamento" routerLinkActive="active">Agendamentos</a>
+    </nav>
+  </aside>
+
+  <main class="page-content">
+
+    <header class="page-header">
+      <h1>Animais</h1>
+      <p>Cadastro de animais para atendimento.</p>
+    </header>
+
+    <section class="card">
+      <h2>Novo animal</h2>
+
+      <div class="form-grid">
+
+        <div class="campo">
+          <label>Nome do animal</label>
+          <input type="text" [(ngModel)]="nome" placeholder="Rex">
+        </div>
+
+        <div class="campo">
+          <label>Espécie</label>
+          <select [(ngModel)]="especie">
+            <option value="">Selecione</option>
+            <option value="Cachorro">Cachorro</option>
+            <option value="Gato">Gato</option>
+            <option value="Outro">Outro</option>
+          </select>
+        </div>
+
+        <div class="campo">
+          <label>Raça</label>
+          <input type="text" [(ngModel)]="raca" placeholder="Labrador">
+        </div>
+
+        <div class="campo">
+          <label>Idade (anos)</label>
+          <input type="number" [(ngModel)]="idade" min="0" max="50" placeholder="5">
+        </div>
+
+        <div class="campo campo-full">
+          <label>Tutor responsável</label>
+          <select [(ngModel)]="tutorId">
+            <option [ngValue]="null">Selecione um tutor</option>
+            <option *ngFor="let t of tutores" [ngValue]="t.id">{{ t.nome }}</option>
+          </select>
+        </div>
+
+      </div>
+
+      <div class="form-actions">
+        <button class="btn-primary" (click)="salvar()" [disabled]="carregando">
+          {{ carregando ? 'Salvando…' : 'Salvar animal' }}
+        </button>
+      </div>
+
+      <p class="msg-erro" *ngIf="erro">{{ erro }}</p>
+      <p class="msg-sucesso" *ngIf="sucesso">{{ sucesso }}</p>
+    </section>
+
+    <section class="card">
+      <h2>Animais cadastrados</h2>
+
+      <div class="vazio" *ngIf="animais.length === 0">
+        Nenhum animal cadastrado ainda.
+      </div>
+
+      <table *ngIf="animais.length > 0">
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>Espécie</th>
+            <th>Raça</th>
+            <th>Idade</th>
+            <th>Tutor</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let a of animais">
+            <td>{{ a.nome }}</td>
+            <td>{{ a.especie }}</td>
+            <td>{{ a.raca }}</td>
+            <td>{{ a.idade }} ano{{ a.idade !== 1 ? 's' : '' }}</td>
+            <td>{{ a.tutor?.nome }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+  </main>
+</div>
