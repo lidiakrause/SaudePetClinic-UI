@@ -1,6 +1,6 @@
 <div class="page-layout">
   
-  <aside class="sidebar">
+  <aside class="sidebar" *ngIf="exibirMenu()">
     <div class="sidebar-logo">
       <span>🐾</span> SaúdePet Clinic
     </div>
@@ -17,7 +17,7 @@
     </button>
   </aside>
 
-  <main class="page-content">
+  <main class="page-content" [style.margin-left]="exibirMenu() ? 'var(--sidebar-w)' : '0'">
     <router-outlet></router-outlet>
   </main>
 

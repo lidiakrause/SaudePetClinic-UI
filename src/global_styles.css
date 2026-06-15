@@ -230,9 +230,13 @@ tbody tr:hover { background: #f9fafb; }
 .login-wrapper {
   min-height: 100vh;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: center;      
+  justify-content: center;  
   background: var(--bg);
+  width: 100vw;             
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
 .login-card {
@@ -246,6 +250,7 @@ tbody tr:hover { background: #f9fafb; }
   display: flex;
   flex-direction: column;
   gap: 18px;
+  margin: 0 auto !important;
 }
 
 .login-logo {

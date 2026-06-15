@@ -1,9 +1,9 @@
-<div class="page-header">
+<header class="page-header">
   <h1>Gerenciar Animais</h1>
   <p>Cadastre, edite ou inative os animais da clínica associando-os aos seus respectivos tutores.</p>
-</div>
+</header>
 
-<div class="card">
+<section class="card">
   <h2>{{ editandoId ? 'Editar Cadastro do Animal' : 'Novo Cadastro de Animal' }}</h2>
   
   <form (ngSubmit)="salvar()">
@@ -115,12 +115,16 @@
       </button>
     </div>
   </form>
-</div>
+</section>
 
-<div class="card">
+<section class="card">
   <h2>Animais Registrados</h2>
   
-  <table>
+  <div class="vazio" *ngIf="listaAnimais.length === 0">
+    Nenhum animal cadastrado no sistema.
+  </div>
+
+  <table *ngIf="listaAnimais.length > 0">
     <thead>
       <tr>
         <th>Nome</th>
@@ -169,10 +173,6 @@
           </button>
         </td>
       </tr>
-      
-      <tr *ngIf="listaAnimais.length === 0">
-        <td colspan="6" class="vazio">Nenhum animal cadastrado no sistema.</td>
-      </tr>
     </tbody>
   </table>
-</div>
+</section>

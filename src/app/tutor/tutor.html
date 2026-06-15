@@ -1,9 +1,9 @@
-<div class="page-header">
+<header class="page-header">
   <h1>Gerenciar Tutores</h1>
   <p>Cadastre, edite ou inative os tutores cadastrados na clínica.</p>
-</div>
+</header>
 
-<div class="card">
+<section class="card">
   <h2>{{ editandoId ? 'Editar Tutor' : 'Novo Cadastro de Tutor' }}</h2>
   
   <form (ngSubmit)="salvar()">
@@ -82,12 +82,16 @@
       </button>
     </div>
   </form>
-</div>
+</section>
 
-<div class="card">
+<section class="card">
   <h2>Tutores Registrados</h2>
   
-  <table>
+  <div class="vazio" *ngIf="listaTutores.length === 0">
+    Nenhum tutor cadastrado no sistema.
+  </div>
+
+  <table *ngIf="listaTutores.length > 0">
     <thead>
       <tr>
         <th>Nome</th>
@@ -130,10 +134,6 @@
           </button>
         </td>
       </tr>
-      
-      <tr *ngIf="listaTutores.length === 0">
-        <td colspan="5" class="vazio">Nenhum tutor cadastrado no sistema.</td>
-      </tr>
     </tbody>
   </table>
-</div>
+</section>

@@ -1,37 +1,22 @@
-<div class="page-layout">
+<header class="page-header">
+  <h1>Dashboard</h1>
+  <p>Bem-vindo ao sistema de gerenciamento da clínica SaúdePet.</p>
+</header>
 
-  <aside class="sidebar">
-    <div class="sidebar-logo">🐾 SaúdePetClinic</div>
-    <nav class="sidebar-nav">
-      <a routerLink="/home" routerLinkActive="active">Home</a>
-      <a routerLink="/tutor" routerLinkActive="active">Tutores</a>
-      <a routerLink="/animal" routerLinkActive="active">Animais</a>
-      <a routerLink="/agendamento" routerLinkActive="active">Agendamentos</a>
-    </nav>
-    <button class="btn-sair" (click)="logout()">Sair</button>
-  </aside>
-
-  <main class="page-content">
-
-    <header class="page-header">
-      <h1>Bem-vindo</h1>
-      <p>Sistema de Gestão - SaúdePet Clinic</p>
-    </header>
-
-    <div class="atalhos">
-      <a routerLink="/tutor" class="atalho-card">
-        <span class="atalho-icon">👤</span>
-        <span>Cadastrar Tutor</span>
-      </a>
-      <a routerLink="/animal" class="atalho-card">
-        <span class="atalho-icon">🐶</span>
-        <span>Cadastrar Animal</span>
-      </a>
-      <a routerLink="/agendamento" class="atalho-card">
-        <span class="atalho-icon">📅</span>
-        <span>Novo Agendamento</span>
-      </a>
-    </div>
-
-  </main>
-</div>
+<section class="card">
+  <h2>Atalhos Rápidos</h2>
+  <div class="atalhos">
+    <a style="cursor: pointer;" (click)="navegar('/tutor')" class="atalho-card">
+      <span class="atalho-icon">👥</span>
+      <span>Gerenciar Tutores</span>
+    </a>
+    <a style="cursor: pointer;" (click)="navegar('/animal')" class="atalho-card">
+      <span class="atalho-icon">🐱</span>
+      <span>Gerenciar Animais</span>
+    </a>
+    <a style="cursor: pointer;" (click)="navegar('/agendamento')" class="atalho-card">
+      <span class="atalho-icon">📅</span>
+      <span>Agendamentos</span>
+    </a>
+  </div>
+</section>

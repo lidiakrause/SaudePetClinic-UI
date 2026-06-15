@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { AnimalService } from '../services/animal.service';
-import { AgendamentoService } from '../services/agendamento.service';
+import { AnimalService } from '../Services/animal.service';
+import { AgendamentoService } from '../Services/agendamento.service';
 
 @Component({
   selector: 'app-agendamento',
