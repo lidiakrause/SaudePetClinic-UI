@@ -3,14 +3,13 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { TutorService } from '../services/tutor.service';
-import { AnimalService } from '../services/animal.service';
+import { AnimalService } from '../Services/animal.service';
 
 @Component({
   selector: 'app-animal',
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './animal.html',
-  styleUrls: ['./animal.css'],
 })
 export class AnimalComponent implements OnInit {
 

@@ -7,8 +7,8 @@ import { Router, RouterModule } from '@angular/router';
   standalone: true,
   imports: [CommonModule, RouterModule],
   templateUrl: './home.html',
-  styleUrls: ['./home.css'],
 })
+
 export class HomeComponent {
 
   constructor(private router: Router) {

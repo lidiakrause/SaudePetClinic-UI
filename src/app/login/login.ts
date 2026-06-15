@@ -8,7 +8,6 @@ import { Router } from '@angular/router';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './login.html',
-  styleUrls: ['./login.css'],
 })
 export class LoginComponent {
 
@@ -16,7 +15,6 @@ export class LoginComponent {
   senha = '';
   erro = '';
 
-  // Credenciais de teste — substitua pela autenticação real quando disponível
   private readonly CNPJ_TESTE = '12345678000126';
   private readonly SENHA_TESTE = 'Cachorro.26';
 
