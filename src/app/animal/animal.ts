@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { TutorService } from '../services/tutor.service';
-import { AnimalService } from '../Services/animal.service';
+import { AnimalService } from '../services/animal.service';
 
 @Component({
   selector: 'app-animal',
