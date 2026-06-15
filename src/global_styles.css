@@ -116,12 +116,19 @@ body {
 
 /* Card */
 .card {
-  background: var(--surface);
+  background: var(--white);
   border: 1px solid var(--border);
-  border-radius: var(--radius);
+  border-radius: 12px;
   padding: 24px;
   margin-bottom: 24px;
-  box-shadow: var(--shadow);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+  max-width: 700px;
+  margin-left: 0;
+  margin-right: auto;
+}
+
+.card:has(table) {
+  max-width: 100%; 
 }
 
 .card h2 {
@@ -133,9 +140,10 @@ body {
 
 /* Form */
 .form-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+ display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 16px;
+  margin-bottom: 20px;
 }
 
 .campo { display: flex; flex-direction: column; gap: 6px; }

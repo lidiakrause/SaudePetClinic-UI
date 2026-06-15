@@ -1,78 +1,139 @@
-<div class="page-layout">
+<div class="page-header">
+  <h1>Gerenciar Tutores</h1>
+  <p>Cadastre, edite ou inative os tutores cadastrados na clínica.</p>
+</div>
 
-  <aside class="sidebar">
-    <div class="sidebar-logo">🐾 SaúdePet</div>
-    <nav class="sidebar-nav">
-      <a routerLink="/home" routerLinkActive="active">Home</a>
-      <a routerLink="/tutor" routerLinkActive="active">Tutores</a>
-      <a routerLink="/animal" routerLinkActive="active">Animais</a>
-      <a routerLink="/agendamento" routerLinkActive="active">Agendamentos</a>
-    </nav>
-  </aside>
-
-  <main class="page-content">
-
-    <header class="page-header">
-      <h1>Tutores</h1>
-      <p>Cadastro de responsáveis pelos animais.</p>
-    </header>
-
-    <section class="card">
-      <h2>Novo tutor</h2>
-
-      <div class="form-grid">
-
-        <div class="campo">
-          <label>Nome completo</label>
-          <input type="text" [(ngModel)]="nome" placeholder="João Silva">
-        </div>
-
-        <div class="campo">
-          <label>Telefone</label>
-          <input type="text" [(ngModel)]="telefone" (input)="formatarTelefone()" placeholder="(45) 99999-9999">
-        </div>
-
-        <div class="campo campo-full">
-          <label>E-mail</label>
-          <input type="email" [(ngModel)]="email" placeholder="joao@email.com">
-        </div>
-
+<div class="card">
+  <h2>{{ editandoId ? 'Editar Tutor' : 'Novo Cadastro de Tutor' }}</h2>
+  
+  <form (ngSubmit)="salvar()">
+    <div class="form-grid">
+      
+      <div class="campo campo-full">
+        <label for="nome">Nome Completo</label>
+        <input 
+          type="text" 
+          id="nome" 
+          name="nome" 
+          [(ngModel)]="tutor.nome" 
+          placeholder="Digite o nome do tutor"
+          required
+        />
       </div>
 
-      <div class="form-actions">
-        <button class="btn-primary" (click)="salvar()" [disabled]="carregando">
-          {{ carregando ? 'Salvando…' : 'Salvar tutor' }}
-        </button>
+      <div class="campo">
+        <label for="cpf">CPF</label>
+        <input 
+          type="text" 
+          id="cpf" 
+          name="cpf" 
+          [(ngModel)]="tutor.cpf" 
+          (input)="formatarCpf()"
+          placeholder="000.000.000-00"
+          maxlength="14"
+          required
+        />
       </div>
 
-      <p class="msg-erro" *ngIf="erro">{{ erro }}</p>
-      <p class="msg-sucesso" *ngIf="sucesso">{{ sucesso }}</p>
-    </section>
-
-    <section class="card">
-      <h2>Tutores cadastrados</h2>
-
-      <div class="vazio" *ngIf="tutores.length === 0">
-        Nenhum tutor cadastrado ainda.
+      <div class="campo">
+        <label for="telefone">Telefone / Celular</label>
+        <input 
+          type="text" 
+          id="telefone" 
+          name="telefone" 
+          [(ngModel)]="tutor.telefone" 
+          (input)="formatarTelefone()"
+          placeholder="(00) 00000-0000"
+          maxlength="15"
+          required
+        />
       </div>
 
-      <table *ngIf="tutores.length > 0">
-        <thead>
-          <tr>
-            <th>Nome</th>
-            <th>Telefone</th>
-            <th>E-mail</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let t of tutores">
-            <td>{{ t.nome }}</td>
-            <td>{{ t.telefone }}</td>
-            <td>{{ t.email }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </section>
+      <div class="campo campo-full">
+        <label for="endereco">Endereço Residencial</label>
+        <input 
+          type="text" 
+          id="endereco" 
+          name="endereco" 
+          [(ngModel)]="tutor.endereco" 
+          placeholder="Rua, número, bairro e cidade"
+          required
+        />
+      </div>
 
-  </main>
+    </div>
+
+    <p class="msg-erro" *ngIf="msgErro">{{ msgErro }}</p>
+    <p class="msg-sucesso" *ngIf="msgSucesso">{{ msgSucesso }}</p>
+
+    <div class="form-actions" style="display: flex; gap: 10px;">
+      <button type="submit" class="btn-primary">
+        {{ editandoId ? 'Atualizar Dados' : 'Salvar Cadastro' }}
+      </button>
+      
+      <button 
+        type="button" 
+        class="btn-sair" 
+        *ngIf="editandoId" 
+        (click)="cancelarEdicao()"
+        style="margin: 0; padding: 10px 22px;"
+      >
+        Cancelar
+      </button>
+    </div>
+  </form>
+</div>
+
+<div class="card">
+  <h2>Tutores Registrados</h2>
+  
+  <table>
+    <thead>
+      <tr>
+        <th>Nome</th>
+        <th>CPF</th>
+        <th>Telefone</th>
+        <th>Status</th>
+        <th style="text-align: right;">Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let t of listaTutores">
+        <td>{{ t.nome }}</td>
+        <td>{{ t.cpf | slice:0:3 }}.***.***-{{ t.cpf | slice:9:11 }}</td>
+        <td>{{ t.telefone }}</td>
+        <td>
+          <span 
+            [style.color]="t.ativo ? 'var(--success)' : 'var(--muted)'"
+            [style.font-weight]="'600'"
+          >
+            {{ t.ativo ? 'Ativo' : 'Inativo' }}
+          </span>
+        </td>
+        <td style="text-align: right; display: flex; gap: 8px; justify-content: flex-end;">
+          <button 
+            class="btn-primary" 
+            (click)="editar(t)" 
+            [disabled]="!t.ativo"
+            style="padding: 6px 12px; font-size: 13px;"
+          >
+            ✏️ Editar
+          </button>
+          
+          <button 
+            class="btn-sair" 
+            (click)="inativar(t.id)" 
+            [disabled]="!t.ativo"
+            style="margin: 0; padding: 6px 12px; font-size: 13px;"
+          >
+            🔒 Inativar
+          </button>
+        </td>
+      </tr>
+      
+      <tr *ngIf="listaTutores.length === 0">
+        <td colspan="5" class="vazio">Nenhum tutor cadastrado no sistema.</td>
+      </tr>
+    </tbody>
+  </table>
 </div>

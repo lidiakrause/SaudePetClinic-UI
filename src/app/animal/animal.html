@@ -1,100 +1,178 @@
-<div class="page-layout">
+<div class="page-header">
+  <h1>Gerenciar Animais</h1>
+  <p>Cadastre, edite ou inative os animais da clínica associando-os aos seus respectivos tutores.</p>
+</div>
 
-  <aside class="sidebar">
-    <div class="sidebar-logo">🐾 SaúdePet</div>
-    <nav class="sidebar-nav">
-      <a routerLink="/home" routerLinkActive="active">Home</a>
-      <a routerLink="/tutor" routerLinkActive="active">Tutores</a>
-      <a routerLink="/animal" routerLinkActive="active">Animais</a>
-      <a routerLink="/agendamento" routerLinkActive="active">Agendamentos</a>
-    </nav>
-  </aside>
-
-  <main class="page-content">
-
-    <header class="page-header">
-      <h1>Animais</h1>
-      <p>Cadastro de animais para atendimento.</p>
-    </header>
-
-    <section class="card">
-      <h2>Novo animal</h2>
-
-      <div class="form-grid">
-
-        <div class="campo">
-          <label>Nome do animal</label>
-          <input type="text" [(ngModel)]="nome" placeholder="Rex">
-        </div>
-
-        <div class="campo">
-          <label>Espécie</label>
-          <select [(ngModel)]="especie">
-            <option value="">Selecione</option>
-            <option value="Cachorro">Cachorro</option>
-            <option value="Gato">Gato</option>
-            <option value="Outro">Outro</option>
-          </select>
-        </div>
-
-        <div class="campo">
-          <label>Raça</label>
-          <input type="text" [(ngModel)]="raca" placeholder="Labrador">
-        </div>
-
-        <div class="campo">
-          <label>Idade (anos)</label>
-          <input type="number" [(ngModel)]="idade" min="0" max="50" placeholder="5">
-        </div>
-
-        <div class="campo campo-full">
-          <label>Tutor responsável</label>
-          <select [(ngModel)]="tutorId">
-            <option [ngValue]="null">Selecione um tutor</option>
-            <option *ngFor="let t of tutores" [ngValue]="t.id">{{ t.nome }}</option>
-          </select>
-        </div>
-
+<div class="card">
+  <h2>{{ editandoId ? 'Editar Cadastro do Animal' : 'Novo Cadastro de Animal' }}</h2>
+  
+  <form (ngSubmit)="salvar()">
+    <div class="form-grid">
+      
+      <div class="campo">
+        <label for="nome">Nome do Animal</label>
+        <input 
+          type="text" 
+          id="nome" 
+          name="nome" 
+          [(ngModel)]="animal.nome" 
+          placeholder="Ex: Thor, Mia"
+          required
+        />
       </div>
 
-      <div class="form-actions">
-        <button class="btn-primary" (click)="salvar()" [disabled]="carregando">
-          {{ carregando ? 'Salvando…' : 'Salvar animal' }}
-        </button>
+      <div class="campo">
+        <label for="idTutor">Tutor Responsável</label>
+        <select 
+          id="idTutor" 
+          name="idTutor" 
+          [(ngModel)]="animal.idTutor" 
+          required
+        >
+          <option value="0" disabled selected>Selecione um tutor ativo</option>
+          <option *ngFor="let tutor of listaTutoresAtivos" [value]="tutor.id">
+            {{ tutor.nome }} (CPF: {{ tutor.cpf | slice:0:3 }}.***)
+          </option>
+        </select>
       </div>
 
-      <p class="msg-erro" *ngIf="erro">{{ erro }}</p>
-      <p class="msg-sucesso" *ngIf="sucesso">{{ sucesso }}</p>
-    </section>
-
-    <section class="card">
-      <h2>Animais cadastrados</h2>
-
-      <div class="vazio" *ngIf="animais.length === 0">
-        Nenhum animal cadastrado ainda.
+      <div class="campo">
+        <label for="especie">Espécie</label>
+        <input 
+          type="text" 
+          id="especie" 
+          name="especie" 
+          [(ngModel)]="animal.especie" 
+          placeholder="Ex: Cão, Gato, Ave"
+          required
+        />
       </div>
 
-      <table *ngIf="animais.length > 0">
-        <thead>
-          <tr>
-            <th>Nome</th>
-            <th>Espécie</th>
-            <th>Raça</th>
-            <th>Idade</th>
-            <th>Tutor</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let a of animais">
-            <td>{{ a.nome }}</td>
-            <td>{{ a.especie }}</td>
-            <td>{{ a.raca }}</td>
-            <td>{{ a.idade }} ano{{ a.idade !== 1 ? 's' : '' }}</td>
-            <td>{{ a.tutor?.nome }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </section>
+      <div class="campo">
+        <label for="raca">Raça</label>
+        <input 
+          type="text" 
+          id="raca" 
+          name="raca" 
+          [(ngModel)]="animal.raca" 
+          placeholder="Ex: Golden Retriever, SRD"
+          required
+        />
+      </div>
 
-  </main>
+      <div class="campo">
+        <label for="idade">Idade (em anos)</label>
+        <input 
+          type="number" 
+          id="idade" 
+          name="idade" 
+          [(ngModel)]="animal.idade" 
+          min="1"
+          required
+        />
+      </div>
+
+      <div class="campo">
+        <label for="peso">Peso (Kg)</label>
+        <input 
+          type="number" 
+          id="peso" 
+          name="peso" 
+          [(ngModel)]="animal.peso" 
+          step="0.1"
+          min="0.1"
+          required
+        />
+      </div>
+
+      <div class="campo">
+        <label for="sexo">Sexo</label>
+        <select id="sexo" name="sexo" [(ngModel)]="animal.sexo" required>
+          <option value="" disabled selected>Selecione</option>
+          <option value="Macho">Macho</option>
+          <option value="Fêmea">Fêmea</option>
+        </select>
+      </div>
+
+    </div>
+
+    <p class="msg-erro" *ngIf="msgErro">{{ msgErro }}</p>
+    <p class="msg-sucesso" *ngIf="msgSucesso">{{ msgSucesso }}</p>
+
+    <div class="form-actions" style="display: flex; gap: 10px;">
+      <button type="submit" class="btn-primary">
+        {{ editandoId ? 'Atualizar Dados' : 'Salvar Cadastro' }}
+      </button>
+      
+      <button 
+        type="button" 
+        class="btn-sair" 
+        *ngIf="editandoId" 
+        (click)="cancelarEdicao()"
+        style="margin: 0; padding: 10px 22px;"
+      >
+        Cancelar
+      </button>
+    </div>
+  </form>
+</div>
+
+<div class="card">
+  <h2>Animais Registrados</h2>
+  
+  <table>
+    <thead>
+      <tr>
+        <th>Nome</th>
+        <th>Espécie/Raça</th>
+        <th>Tutor Responsável</th>
+        <th>Idade / Peso</th>
+        <th>Status</th>
+        <th style="text-align: right;">Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let a of listaAnimais">
+        <td>
+          <span style="font-weight: 600;">{{ a.nome }}</span>
+          <br>
+          <small style="color: var(--muted);">{{ a.sexo }}</small>
+        </td>
+        <td>{{ a.especie }} / {{ a.raca }}</td>
+        <td>{{ a.nomeTutor }}</td>
+        <td>{{ a.idade }} anos / {{ a.peso }} Kg</td>
+        <td>
+          <span 
+            [style.color]="a.ativo ? 'var(--success)' : 'var(--muted)'"
+            [style.font-weight]="'600'"
+          >
+            {{ a.ativo ? 'Ativo' : 'Inativo' }}
+          </span>
+        </td>
+        <td style="text-align: right; display: flex; gap: 8px; justify-content: flex-end;">
+          <button 
+            class="btn-primary" 
+            (click)="editar(a)" 
+            [disabled]="!a.ativo"
+            style="padding: 6px 12px; font-size: 13px;"
+          >
+            ✏️ Editar
+          </button>
+          
+          <button 
+            class="btn-sair" 
+            (click)="inativar(a.id)" 
+            [disabled]="!a.ativo"
+            style="margin: 0; padding: 6px 12px; font-size: 13px;"
+          >
+            🔒 Inativar
+          </button>
+        </td>
+      </tr>
+      
+      <tr *ngIf="listaAnimais.length === 0">
+        <td colspan="6" class="vazio">Nenhum animal cadastrado no sistema.</td>
+      </tr>
+    </tbody>
+  </table>
 </div>
