@@ -1,0 +1,21 @@
+<div class="login-wrapper">
+  <div class="login-card">
+    <div class="login-logo">
+      <span>🐾</span>
+      <h1>SaúdePet Clinic</h1>
+    </div>
+    <p style="color: var(--muted); font-size: 14px; text-align: center; margin-bottom: 4px;">
+      Selecione o seu perfil para acessar o sistema
+    </p>
+
+    <div class="perfil-wrapper">
+      <button (click)="irParaLogin('recepcionista')" class="btn-perfil">
+        💼 Recepcionista
+      </button>
+
+      <button (click)="irParaLogin('veterinario')" class="btn-perfil">
+        🩺 Veterinário
+      </button>
+    </div>
+  </div>
+</div>

@@ -1,4 +1,4 @@
-/* ── Reset & base ─────────────────────────────────────────── */
+/*  Reset & base */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
@@ -24,13 +24,13 @@ body {
   line-height: 1.5;
 }
 
-/* ── Layout ───────────────────────────────────────────────── */
+/* Layout */
 .page-layout {
   display: flex;
   min-height: 100vh;
 }
 
-/* ── Sidebar ──────────────────────────────────────────────── */
+/* Sidebar */
 .sidebar {
   width: var(--sidebar-w);
   background: var(--surface);
@@ -92,7 +92,7 @@ body {
 
 .btn-sair:hover { background: #fef2f2; }
 
-/* ── Main content ─────────────────────────────────────────── */
+/* Main content */
 .page-content {
   margin-left: var(--sidebar-w);
   flex: 1;
@@ -114,7 +114,7 @@ body {
   margin-top: 4px;
 }
 
-/* ── Card ─────────────────────────────────────────────────── */
+/* Card */
 .card {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -131,7 +131,7 @@ body {
   color: var(--text);
 }
 
-/* ── Form ─────────────────────────────────────────────────── */
+/* Form */
 .form-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -180,11 +180,11 @@ input:focus, select:focus { border-color: var(--primary); }
 .btn-primary:hover:not(:disabled) { background: var(--primary-h); }
 .btn-primary:disabled { opacity: .6; cursor: not-allowed; }
 
-/* ── Messages ─────────────────────────────────────────────── */
+/* Messages */
 .msg-erro   { margin-top: 12px; color: var(--danger);  font-size: 14px; }
 .msg-sucesso{ margin-top: 12px; color: var(--success); font-size: 14px; }
 
-/* ── Table ────────────────────────────────────────────────── */
+/* Table */
 table {
   width: 100%;
   border-collapse: collapse;
@@ -218,7 +218,7 @@ tbody tr:hover { background: #f9fafb; }
   text-align: center;
 }
 
-/* ── Login ────────────────────────────────────────────────── */
+/* Login */
 .login-wrapper {
   min-height: 100vh;
   display: flex;
@@ -248,9 +248,17 @@ tbody tr:hover { background: #f9fafb; }
 }
 
 .login-logo span { font-size: 28px; }
-.login-logo h1   { font-size: 20px; font-weight: 600; }
 
-/* ── Home atalhos ─────────────────────────────────────────── */
+.login-logo h1   { 
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 24px;
+  font-weight: 700;
+  font-style: italic;
+  color: var(--text);
+  letter-spacing: -0.02em;
+}
+
+/* Home atalhos */
 .atalhos {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -281,7 +289,7 @@ tbody tr:hover { background: #f9fafb; }
 
 .atalho-icon { font-size: 32px; }
 
-/* ── NÃO IMPLEMENTADO ─────────────────────────────────────── */
+/* NÃO IMPLEMENTADO */
 .nao-implementado {
   padding: 40px;
   text-align: center;
@@ -291,4 +299,61 @@ tbody tr:hover { background: #f9fafb; }
   border: 2px dashed var(--border);
   border-radius: var(--radius);
   background: var(--surface);
+}
+
+/* Início */
+.perfil-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+}
+
+.btn-perfil {
+  width: 100%;
+  padding: 14px 20px;
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color .15s, box-shadow .15s, background .15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  box-shadow: var(--shadow);
+}
+
+.btn-perfil:hover {
+  border-color: var(--primary);
+  background: #eff6ff;
+  color: var(--primary);
+  box-shadow: 0 2px 8px rgba(37,99,235,.12);
+}
+
+/* Login Vet & Voltar */
+.login-card h3 {
+  font-size: 14px;
+  color: var(--muted);
+  font-weight: 500;
+  margin-top: -6px;
+  text-align: center;
+}
+
+.btn-voltar {
+  display: block;
+  text-align: center;
+  margin-top: 6px;
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: color .15s;
+}
+
+.btn-voltar:hover {
+  color: var(--primary);
 }
