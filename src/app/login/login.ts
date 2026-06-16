@@ -29,18 +29,23 @@ export class LoginComponent {
       return;
     }
 
-    localStorage.setItem('usuario', cpfLimpo);
-    this.erro = '';
-    this.router.navigate(['/home']);
+    // Validação dos dados de teste
+    if (cpfLimpo === '04411144421' && this.senha === 'saudepet123') {
+      localStorage.setItem('usuario', cpfLimpo);
+      this.erro = '';
+      this.router.navigate(['/home']);
+    } else {
+      this.erro = "CPF ou Senha inválidos para teste. Use CPF: 044.111.444-21 e Senha: saudepet123";
+    }
   }
 
   formatarCpf(): void {
     let v = this.cpf.replace(/\D/g, '');
     
     if (v.length <= 11) {
-      v = v.replace(/(\md_digit{3})(\md_digit)/, '$1.$2');
-      v = v.replace(/(\md_digit{3})(\md_digit)/, '$1.$2');
-      v = v.replace(/(\md_digit{3})(\md_digit{1,2})$/, '$1-$2');
+      v = v.replace(/^(\d{3})(\d)/, '$1.$2');
+      v = v.replace(/^(\d{3})\.(\d{3})(\d)/, '$1.$2.$3');
+      v = v.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
     }
     
     this.cpf = v;
