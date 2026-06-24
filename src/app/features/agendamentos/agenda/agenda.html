@@ -50,7 +50,14 @@
 
         <div class="campo">
           <label for="dataAgendamento">Data da Consulta</label>
-          <input type="date" id="dataAgendamento" name="dataAgendamento" [(ngModel)]="dataSelecionada" (change)="atualizarHorariosDisponiveis()" required />
+          <input
+                  type="date"
+                  id="dataAgendamento"
+                  name="dataAgendamento"
+                  [ngModel]="dataSelecionada"
+                  (ngModelChange)="atualizarHorariosDisponiveis($event)"
+                  [min]="dataMinima"
+                  required />
         </div>
 
         <div>

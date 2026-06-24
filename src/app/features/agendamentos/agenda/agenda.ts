@@ -19,6 +19,7 @@ interface DiaCalendario {
   dataStr: string;
   temAgendamento: boolean;
   isHoje: boolean;
+  isPassado: boolean;
 }
 
 @Component({
@@ -50,6 +51,7 @@ export class GerenciarAgendamentos implements OnInit {
   carregandoLista = false;
 
   dataFiltro = '';
+  dataMinima = '';
   anoAtual = new Date().getFullYear();
   mesAtual = new Date().getMonth();
   nomesMeses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
@@ -85,8 +87,13 @@ export class GerenciarAgendamentos implements OnInit {
     return `${ano}-${mes}-${dia}`;
   }
 
+  configurarDataMinima(): void {
+    this.dataMinima = this.obterDataLocalFormatada();
+  }
+
   ngOnInit(): void {
     this.dataFiltro = this.obterDataLocalFormatada();
+    this.configurarDataMinima();
 
     const usuarioJson = localStorage.getItem('usuario');
     if (usuarioJson) {
@@ -176,7 +183,7 @@ export class GerenciarAgendamentos implements OnInit {
     const hojeStr = this.obterDataLocalFormatada();
 
     for (let i = 0; i < primeiroDiaDaSemana; i++) {
-      this.diasDoCalendario.push({ numero: null, dataStr: '', temAgendamento: false, isHoje: false });
+      this.diasDoCalendario.push({ numero: null, dataStr: '', temAgendamento: false, isHoje: false, isPassado: false });
     }
 
     for (let dia = 1; dia <= totalDiasNoMes; dia++) {
@@ -190,7 +197,8 @@ export class GerenciarAgendamentos implements OnInit {
         numero: dia,
         dataStr: dataStringISO,
         temAgendamento: possuiConsulta,
-        isHoje: dataStringISO === hojeStr
+        isHoje: dataStringISO === hojeStr,
+        isPassado: dataStringISO < hojeStr
       });
     }
   }
@@ -237,12 +245,33 @@ export class GerenciarAgendamentos implements OnInit {
     this.exibirDropdownAnimais = false;
   }
 
-  atualizarHorariosDisponiveis(): void {
+atualizarHorariosDisponiveis(novaData?: string): void {
+    if (novaData !== undefined) {
+      this.dataSelecionada = novaData;
+    }
+
     this.horarioSelecionado = '';
     this.horariosDisponiveis = [];
     this.erro = '';
 
-    if (!this.idVeterinarioSelecionado || !this.dataSelecionada) {
+    if (!this.dataSelecionada) {
+      return;
+    }
+
+    if (this.dataSelecionada.length === 10) {
+      const hojeStr = this.obterDataLocalFormatada();
+
+      if (this.dataSelecionada < hojeStr) {
+        this.erro = 'Não é permitido selecionar ou digitar uma data retroativa.';
+        this.dataSelecionada = '';
+        this.cdr.detectChanges();
+        return;
+      }
+    } else if (this.dataSelecionada.length > 10) {
+      this.dataSelecionada = this.dataSelecionada.substring(0, 10);
+    }
+
+    if (!this.idVeterinarioSelecionado || this.dataSelecionada.length < 10) {
       return;
     }
 
