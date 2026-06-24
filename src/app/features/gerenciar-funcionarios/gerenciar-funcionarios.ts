@@ -188,6 +188,10 @@ export class GerenciarFuncionarios implements OnInit {
       this.erro = 'Informe uma senha de acesso.';
       return;
     }
+    if (this.senha && this.senha.length < 6) {
+      this.erro = 'A senha deve ter no mínimo 6 caracteres.';
+      return;
+    }
     if (this.perfilSelecionado === 'VETERINARIO' && !this.crmv.trim()) {
       this.erro = 'O número do CRMV é obrigatório para médicos veterinários.';
       return;

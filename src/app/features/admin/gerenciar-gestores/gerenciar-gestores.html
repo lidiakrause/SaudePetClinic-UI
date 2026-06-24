@@ -49,7 +49,7 @@
         <label for="senha">Senha {{ modoEdicao ? '(Deixe em branco para manter a atual)' : '' }}</label>
         <input
           type="password" id="senha" name="senha"
-          [(ngModel)]="senha" placeholder="Senha de acesso" [required]="!modoEdicao"
+          [(ngModel)]="senha" placeholder="Senha de acesso" [required]="!modoEdicao"  minlength="6"
         />
       </div>
     </div>

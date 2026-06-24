@@ -131,6 +131,10 @@ export class GerenciarGestores implements OnInit {
       this.erro = 'Informe uma senha para o novo gestor.';
       return;
     }
+    if (this.senha && this.senha.length < 6) {
+      this.erro = 'A senha deve ter no mínimo 6 caracteres.';
+      return;
+    }
 
     const payload: UsuarioRequestDTO = {
       idClinica: this.idClinicaSelecionada,
