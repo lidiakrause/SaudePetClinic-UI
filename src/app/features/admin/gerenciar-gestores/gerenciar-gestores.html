@@ -1,0 +1,120 @@
+<div class="page-header">
+  <h1>Gerenciar Gestores</h1>
+  <p>Cadastre, edite e remova administradores locais de clínicas</p>
+</div>
+
+@if (!idClinicaSelecionada) {
+<div class="card" style="text-align: center; padding: 40px 20px;">
+  <p class="vazio" style="font-size: 16px; color: #e11d48; font-weight: bold;">
+    Nenhuma Clínica Selecionada
+  </p>
+  <p style="color: #64748b; margin-top: 8px;">
+    Por favor, vá para a página de <strong>Gerenciar Clínicas</strong> e selecione/acesse uma unidade primeiro.
+  </p>
+</div>
+} @else {
+
+<div style="margin-bottom: 20px; font-size: 14px; color: #475569;">
+  Gerenciando os gestores da unidade: <strong style="color: #0f172a;">{{ nomeClinicaSelecionada }}</strong>
+</div>
+
+@if (erro) { <p class="msg-erro">{{ erro }}</p> }
+@if (sucesso) { <p class="msg-sucesso">{{ sucesso }}</p> }
+
+@if (exibirFormulario) {
+<div class="card">
+  <h2>{{ modoEdicao ? 'Editar Gestor' : 'Novo Gestor' }}</h2>
+
+  <form (ngSubmit)="salvar()" #form="ngForm">
+    <div class="form-grid">
+
+      <div class="campo">
+        <label for="cpf">CPF</label>
+        <input
+          type="text" id="cpf" name="cpf"
+          [(ngModel)]="cpf" (input)="formatarCpf()"
+          placeholder="000.000.000-00" maxlength="14" required
+        />
+      </div>
+
+      <div class="campo">
+        <label for="nome">Nome Completo</label>
+        <input
+          type="text" id="nome" name="nome"
+          [(ngModel)]="nome" placeholder="Ex: João da Silva" required
+        />
+      </div>
+
+      <div class="campo">
+        <label for="senha">Senha {{ modoEdicao ? '(Deixe em branco para manter a atual)' : '' }}</label>
+        <input
+          type="password" id="senha" name="senha"
+          [(ngModel)]="senha" placeholder="Senha de acesso" [required]="!modoEdicao"
+        />
+      </div>
+    </div>
+
+    <div class="form-actions" style="display: flex; gap: 12px; margin-top: 20px;">
+      <button type="submit" class="btn-primary" [disabled]="salvando">
+        {{ salvando ? 'Salvando...' : (modoEdicao ? 'Confirmar Alterações' : 'Cadastrar Gestor') }}
+      </button>
+      <button type="button" class="btn-logout" style="background-color: #edf2f7; color: #4a5568; border-color: #cbd5e1;" (click)="cancelar()" [disabled]="salvando">
+        Cancelar
+      </button>
+    </div>
+  </form>
+</div>
+}
+
+@if (!exibirFormulario) {
+<div class="card">
+  <button type="button" class="btn-primary" (click)="novoGestor()">
+    Novo Gestor
+  </button>
+</div>
+}
+
+<div class="card">
+  <h2>Gestores Cadastrados</h2>
+
+  @if (carregando) {
+  <p class="vazio">Buscando dados no servidor...</p>
+  } @else {
+  @if (gestores.length > 0) {
+  <table>
+    <thead>
+    <tr>
+      <th style="width: 50px; text-align: center;">ID</th>
+      <th>CPF</th>
+      <th>Nome</th>
+      <th>Ações</th>
+    </tr>
+    </thead>
+    <tbody>
+    @for (gestor of gestores; track gestor.idUsuario) {
+    <tr>
+      <td style="text-align: center; font-weight: bold; color: #64748b;">
+        #{{ gestor.idUsuario }}
+      </td>
+      <td>{{ gestor.cpf }}</td>
+      <td>{{ gestor.nome }}</td>
+      <td style="display: flex; gap: 8px;">
+
+        <button type="button" class="btn-primary" style="padding: 6px 14px; font-size: 13px;" (click)="editarGestor(gestor)">
+          Editar
+        </button>
+
+        <button type="button" class="btn-logout" [disabled]="excluindoId === gestor.idUsuario" (click)="excluir(gestor)">
+          {{ excluindoId === gestor.idUsuario ? 'Removendo...' : 'Excluir' }}
+        </button>
+      </td>
+    </tr>
+    }
+    </tbody>
+  </table>
+  } @else {
+  <p class="vazio">Nenhum gestor encontrado para esta clínica.</p>
+  }
+  }
+</div>
+}

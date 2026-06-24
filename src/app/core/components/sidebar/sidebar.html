@@ -1,0 +1,52 @@
+<nav class="sidebar">
+  <div class="sidebar-brand">
+    <img src="/favicon.svg" alt="Logo SaúdePetClinic" class="sidebar-logo-icon" />
+    <span class="sidebar-brand-name">SaúdePetClinic</span>
+  </div>
+  <div class="menu-section">
+    <div class="menu-section" *ngIf="hasRole(['ADMIN'])">
+      <p class="section-title">Administração Global</p>
+      <ul>
+        <li>
+          <a routerLink="/gerenciar-clinicas" routerLinkActive="active">Gerenciar Clínicas</a>
+        </li>
+        <li>
+          <a routerLink="/gerenciar-gestores" routerLinkActive="active">Gerenciar Gestores</a>
+        </li>
+      </ul>
+    </div>
+    <p class="section-title">Atendimento</p>
+    <ul>
+      <li>
+        <a routerLink="/dashboard" routerLinkActive="active">Início / Dashboard</a>
+      </li>
+      <li *ngIf="hasRole(['ADMIN', 'GESTOR', 'VETERINARIO', 'RECEPCIONISTA'])">
+        <a routerLink="/agendamento" routerLinkActive="active">Agenda Global</a>
+      </li>
+      <li *ngIf="hasRole(['ADMIN', 'GESTOR', 'VETERINARIO'])">
+        <a routerLink="/atendimento" routerLinkActive="active">Realizar Atendimento</a>
+      </li>
+    </ul>
+  </div>
+
+  <div class="menu-section">
+    <p class="section-title">Clientes & Pets</p>
+    <ul>
+      <li *ngIf="hasRole(['ADMIN', 'GESTOR', 'VETERINARIO', 'RECEPCIONISTA'])">
+        <a routerLink="/gerenciar-tutores" routerLinkActive="active">Gerenciar Tutores</a>
+      </li>
+      <li *ngIf="hasRole(['ADMIN', 'GESTOR', 'VETERINARIO', 'RECEPCIONISTA'])">
+        <a routerLink="/gerenciar-animais" routerLinkActive="active">Gerenciar Animais</a>
+      </li>
+    </ul>
+  </div>
+
+  <div class="menu-section" *ngIf="hasRole(['ADMIN', 'GESTOR'])">
+    <p class="section-title">Gestão da Unidade</p>
+    <ul>
+      <li>
+        <a routerLink="/gerenciar-funcionarios" routerLinkActive="active">Equipe da Clínica</a>
+      </li>
+    </ul>
+  </div>
+</nav>

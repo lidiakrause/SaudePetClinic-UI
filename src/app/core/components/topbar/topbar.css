@@ -1,0 +1,90 @@
+.topbar {
+  position: fixed;
+  top: 0;
+  left: 260px;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #ffffff;
+  padding: 0 24px;
+  height: 65px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  border-bottom: 1px solid #e2e8f0;
+  z-index: 50;
+  box-sizing: border-box;
+}
+
+.topbar-brand {
+  display: flex;
+  align-items: center;
+}
+
+.topbar-brand {
+  display: flex;
+  align-items: center;
+  min-width: 260px;
+}
+
+.topbar-user-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.user-details {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.user-name {
+  font-weight: 600;
+  color: #2d3748;
+  font-size: 0.9rem;
+}
+
+.user-clinic {
+  font-size: 0.9rem;
+  background-color: #f0fff4;
+  color: #22543d;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-weight: 600;
+  border: 1px solid #c6f6d5;
+}
+
+.user-role {
+  font-size: 0.7rem;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.badge-admin { background-color: #fed7d7; color: #9b2c2c; }
+.badge-gestor { background-color: #feebc8; color: #9c4221; }
+.badge-vet { background-color: #e6fffa; color: #234e52; }
+.badge-recep { background-color: #edf2f7; color: #4a5568; }
+.badge-default { background-color: #edf2f7; color: #4a5568; }
+
+.btn-logout {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background-color: transparent;
+  border: 1px solid #e2e8f0;
+  padding: 5px 10px;
+  border-radius: 6px;
+  color: #e53e3e;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: background 0.15s;
+}
+
+.btn-logout:hover {
+  background-color: #fff5f5;
+  border-color: #feb2b2;
+}

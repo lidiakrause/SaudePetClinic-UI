@@ -1,36 +1,26 @@
-import { Component } from '@angular/core';
-import { RouterOutlet, Router, NavigationEnd } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { Component, inject } from '@angular/core';
+import { CommonModule } from '@angular/common'
+import { Router, RouterOutlet } from '@angular/router';
+
+import { Topbar } from '@core/components/topbar/topbar';
+import { Sidebar } from '@core/components/sidebar/sidebar';
 
 @Component({
   selector: 'app-root',
-  standalone: true,
-  imports: [RouterOutlet, CommonModule],
+  imports: [
+    CommonModule,
+    RouterOutlet,
+    Topbar,
+    Sidebar
+  ],
   templateUrl: './app.html',
+  styleUrl: './app.css'
 })
-export class AppComponent {
-  
-  rotaAtual: string = '/';
+export class App {
+  private router = inject(Router);
 
-  constructor(private router: Router) {
-    this.router.events.subscribe((event) => {
-      if (event instanceof NavigationEnd) {
-        this.rotaAtual = event.urlAfterRedirects;
-      }
-    });
+
+  public exibirMenu(): boolean {
+    return this.router.url !== '/login' && this.router.url !== '/';
   }
-
-  navegar(rota: string): void {
-    this.router.navigate([rota]);
-  }
-
-  exibirMenu(): boolean {
-  const rota = this.rotaAtual.split('?')[0];
-
-  if (rota === '/' || rota === '/login') {
-    return false;
-  }
-  
-  return true; 
-}
 }

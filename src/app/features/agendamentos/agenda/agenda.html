@@ -1,0 +1,225 @@
+<div class="page-header">
+  <h1>Central de Agendamentos</h1>
+  <p>Monitore a agenda da clínica e realize novas marcações em um painel unificado</p>
+</div>
+
+@if (!idClinicaSelecionada) {
+<div class="card" style="text-align: center; padding: 40px 20px;">
+  <p class="vazio" style="font-size: 16px; color: #e11d48; font-weight: bold;">Nenhuma Clínica Selecionada</p>
+</div>
+} @else {
+
+@if (erro) { <p class="msg-erro">{{ erro }}</p> }
+@if (sucesso) { <p class="msg-sucesso">{{ sucesso }}</p> }
+
+<div style="display: grid; grid-template-columns: 1fr 1.4fr; gap: 24px; align-items: start; margin-top: 20px;">
+
+  <div class="card" style="margin: 0;">
+    <h2 style="margin-bottom: 20px; font-size: 18px; color: #0f172a; border-bottom: 2px solid #f1f5f9; padding-bottom: 10px;">Nova Consulta</h2>
+
+    <form (ngSubmit)="salvarAgendamento()" #form="ngForm">
+      <div style="display: flex; flex-direction: column; gap: 16px;">
+
+        <div class="campo" style="position: relative;">
+          <label for="animalBusca">Paciente (Animal)</label>
+          <input
+            type="text" id="animalBusca" name="animalBusca" autocomplete="off"
+            [(ngModel)]="termoBuscaAnimal" (input)="filtrarAnimaisDinamico()"
+            placeholder="Digite o nome do animal..." required
+          />
+          @if (exibirDropdownAnimais && sugestoesAnimais.length > 0) {
+          <ul style="position: absolute; top: 100%; left: 0; width: 100%; background: white; border: 1px solid #cbd5e1; z-index: 50; max-height: 150px; overflow-y: auto; list-style: none; padding: 0; margin: 4px 0 0 0; border-radius: 6px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+            @for (animal of sugestoesAnimais; track animal.idAnimal) {
+            <li (click)="selecionarAnimalDropdown(animal)" style="padding: 10px; cursor: pointer; border-bottom: 1px solid #f1f5f9; font-size: 13px;" onmouseover="this.style.backgroundColor='#f8fafc'" onmouseout="this.style.backgroundColor='white'">
+              <strong>{{ animal.nome }}</strong> <span style="font-size: 11px; color: #64748b;"> (Dono: {{ getNomeTutor(animal.idTutor) }})</span>
+            </li>
+            }
+          </ul>
+          }
+        </div>
+
+        <div class="campo">
+          <label for="veterinario">Veterinário(a) Responsável</label>
+          <select id="veterinario" name="veterinario" [(ngModel)]="idVeterinarioSelecionado" (change)="atualizarHorariosDisponiveis()" required style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; background-color: #fff;">
+            <option [ngValue]="null" disabled selected>Selecione um profissional...</option>
+            @for (vet of veterinarios; track vet.idUsuario) {
+            <option [value]="vet.idUsuario">{{ vet.nome }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="campo">
+          <label for="dataAgendamento">Data da Consulta</label>
+          <input type="date" id="dataAgendamento" name="dataAgendamento" [(ngModel)]="dataSelecionada" (change)="atualizarHorariosDisponiveis()" required />
+        </div>
+
+        <div>
+          <label style="font-weight: 600; font-size: 13px; color: #475569; display: block; margin-bottom: 8px;">Escolha o Horário Livre</label>
+          @if (carregandoHorarios) {
+          <p style="font-size: 12px; color: #64748b; font-style: italic;">Consultando grade do profissional...</p>
+          } @else {
+          @if (horariosDisponiveis.length > 0) {
+          <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(75px, 1fr)); gap: 8px; max-height: 130px; overflow-y: auto; padding: 4px; border: 1px solid #f1f5f9; border-radius: 6px;">
+            @for (hora of horariosDisponiveis; track hora) {
+            <button type="button" (click)="horarioSelecionado = hora" [style.background-color]="horarioSelecionado === hora ? '#0f172a' : '#f8fafc'" [style.color]="horarioSelecionado === hora ? '#ffffff' : '#334155'" [style.border-color]="horarioSelecionado === hora ? '#0f172a' : '#e2e8f0'" style="padding: 6px; border: 1px solid; border-radius: 4px; font-weight: 600; cursor: pointer; text-align: center; font-size: 12px;">
+              {{ hora }}
+            </button>
+            }
+          </div>
+          } @else {
+          <p style="font-size: 12px; color: #94a3b8; background-color: #f8fafc; padding: 10px; border-radius: 6px; border: 1px dashed #e2e8f0; margin: 0;">
+            Preencha o Vet e a Data para ver os slots livres.
+          </p>
+          }
+          }
+        </div>
+
+        <div class="campo">
+          <label for="obs">Anotações Clínicas (Opcional)</label>
+          <textarea id="obs" name="obs" [(ngModel)]="anotacoes" rows="2" placeholder="Sintomas, queixas, vacinas..." style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-family: inherit; resize: none; font-size: 13px;"></textarea>
+        </div>
+
+        <button type="submit" class="btn-primary" style="width: 100%; padding: 12px; margin-top: 10px;" [disabled]="salvando || !horarioSelecionado">
+          {{ salvando ? 'Processando...' : 'Agendar Consulta' }}
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 24px;">
+
+    <div class="card" style="margin: 0; padding: 16px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <h3 style="font-size: 15px; font-weight: 700; color: #0f172a;">Filtro por Calendário</h3>
+        <div style="display: flex; gap: 6px;">
+          <button type="button" (click)="mudarMes(-1)" style="padding: 4px 10px; border: 1px solid #cbd5e1; background: white; border-radius: 4px; cursor: pointer; font-weight: bold;">&lt;</button>
+          <span style="font-size: 14px; font-weight: 600; min-width: 110px; text-align: center; display: inline-block; padding-top: 4px;">{{ nomesMeses[mesAtual] }} {{ anoAtual }}</span>
+          <button type="button" (click)="mudarMes(1)" style="padding: 4px 10px; border: 1px solid #cbd5e1; background: white; border-radius: 4px; cursor: pointer; font-weight: bold;">&gt;</button>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-size: 11px; font-weight: 700; color: #64748b; margin-bottom: 6px;">
+        <div>Dom</div><div>Seg</div><div>Ter</div><div>Qua</div><div>Qui</div><div>Sex</div><div>Sáb</div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px;">
+        @for (dia of diasDoCalendario; track $index) {
+        <div (click)="selecionarDataCalendario(dia.dataStr)" [style.cursor]="dia.numero ? 'pointer' : 'default'" [style.background-color]="dataFiltro === dia.dataStr ? '#0f172a' : (dia.isHoje ? '#f1f5f9' : 'transparent')" [style.color]="dataFiltro === dia.dataStr ? '#ffffff' : '#0f172a'" [style.border]="dia.isHoje ? '1px solid #cbd5e1' : 'none'" style="height: 38px; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 6px; font-size: 13px; font-weight: 600; position: relative;">
+          {{ dia.numero }}
+          @if (dia.temAgendamento) {
+          <span [style.background-color]="dataFiltro === dia.dataStr ? '#38bdf8' : '#2563eb'" style="width: 5px; height: 5px; border-radius: 50%; position: absolute; bottom: 3px;"></span>
+          }
+        </div>
+        }
+      </div>
+    </div>
+
+    <div class="card" style="margin: 0;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 2px solid #f1f5f9; padding-bottom: 10px;">
+        <h2 style="font-size: 16px; margin: 0;">Consultas do Dia</h2>
+        <span style="font-size: 13px; background-color: #e2e8f0; color: #334155; padding: 4px 10px; border-radius: 20px; font-weight: 600;">
+          {{ dataFiltro | date:'dd/MM/yyyy' }}
+        </span>
+      </div>
+
+      @if (carregandoLista) {
+      <p class="vazio">Sincronizando registros da clínica...</p>
+      } @else {
+      @if (agendamentosFiltrados.length > 0) {
+      <table>
+        <thead>
+        <tr>
+          <th style="width: 60px; text-align: center;">Horário</th>
+          <th>Paciente</th>
+          <th>Médico Veterinário</th>
+          <th>Status</th>
+        </tr>
+        </thead>
+        <tbody>
+        @for (agenda of agendamentosFiltrados; track agenda.idAgendamento) {
+        <tr (click)="abrirModalDetalhes(agenda)" style="cursor: pointer;" onmouseover="this.style.backgroundColor='#f8fafc'" onmouseout="this.style.backgroundColor='transparent'">
+          <td style="text-align: center; font-weight: bold; color: #0f172a; font-size: 14px;">{{ agenda.hora }} </td>
+          <td style="color: #475569;">{{ agenda.nomeAnimal }}</td>
+          <td style="color: #475569;">{{ agenda.nomeVeterinario }}</td>
+          <td>
+                    <span [style.background-color]="$any(agenda.status) === 'FINALIZADO' ? '#dcfce7' : ($any(agenda.status) === 'CANCELADO' ? '#fee2e2' : '#e0f2fe')" [style.color]="$any(agenda.status) === 'FINALIZADO' ? '#15803d' : ($any(agenda.status) === 'CANCELADO' ? '#b91c1c' : '#0369a1')" style="padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: 700;">
+                      {{ agenda.status }}
+                    </span>
+          </td>
+        </tr>
+        }
+        </tbody>
+      </table>
+      } @else {
+      <p class="vazio" style="padding: 30px 0;">Nenhuma consulta agendada para este dia.</p>
+      }
+      }
+    </div>
+
+  </div>
+</div>
+}
+
+@if (exibirModalDetalhes && agendamentoSelecionadoDetalhe) {
+<div style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(15, 23, 42, 0.6); display: flex; justify-content: center; align-items: center; z-index: 9999; backdrop-filter: blur(4px);">
+  <div class="card" style="width: 550px; margin: 0; padding: 24px; border-radius: 12px; box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.15); border: 1px solid #e2e8f0; background: #fff;">
+
+    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f1f5f9; padding-bottom: 12px; margin-bottom: 16px;">
+      <h3 style="font-size: 18px; font-weight: 700; color: #0f172a; margin: 0;">Detalhes da Consulta</h3>
+      <button type="button" style="background: transparent; border: none; font-size: 20px; cursor: pointer; color: #94a3b8;" (click)="fecharModalDetalhes()">✕</button>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 12px; font-size: 14px; color: #334155;">
+      <div><strong>Paciente:</strong> {{ agendamentoSelecionadoDetalhe.nomeAnimal }} (ID: #{{ agendamentoSelecionadoDetalhe.idAnimal }})</div>
+      <div><strong>Médico Veterinário:</strong> {{ agendamentoSelecionadoDetalhe.nomeVeterinario }}</div>
+      <div><strong>Data Marcada:</strong> {{ agendamentoSelecionadoDetalhe.data | date:'dd/MM/yyyy' }}</div>
+      <div><strong>Horário Escolhido:</strong> {{ agendamentoSelecionadoDetalhe.hora }}</div>
+
+      <div><strong>Situação Atual:</strong>
+        <span [style.background-color]="$any(agendamentoSelecionadoDetalhe.status) === 'FINALIZADO' ? '#dcfce7' : ($any(agendamentoSelecionadoDetalhe.status) === 'CANCELADO' ? '#fee2e2' : '#e0f2fe')" [style.color]="$any(agendamentoSelecionadoDetalhe.status) === 'FINALIZADO' ? '#15803d' : ($any(agendamentoSelecionadoDetalhe.status) === 'CANCELADO' ? '#b91c1c' : '#0369a1')" style="padding: 4px 10px; border-radius: 12px; font-weight: 700; font-size: 12px; margin-left: 6px;">
+            {{ agendamentoSelecionadoDetalhe.status }}
+          </span>
+      </div>
+
+      <div style="margin-top: 10px; padding: 12px; background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px;">
+        <strong style="color: #0f172a; display: block; margin-bottom: 6px;">Observações Cadastradas:</strong>
+        <p style="margin: 0; line-height: 1.5; color: #475569; white-space: pre-wrap;">
+          {{ agendamentoSelecionadoDetalhe.anotacoes || 'Nenhum parecer ou justificativa foi anexado a este registro.' }}
+        </p>
+      </div>
+
+      @if (exibirFormCancelamento) {
+      <div style="margin-top: 15px; padding-top: 15px; border-top: 2px dashed #ef4444;">
+        <div class="campo">
+          <label for="motivoCancelamento" style="font-weight: 700; color: #b91c1c;">Motivo/Justificativa do Cancelamento <span style="color: #ef4444;">*</span></label>
+          <textarea id="motivoCancelamento" name="motivoCancelamento" [(ngModel)]="justificativaCancelamento" rows="3" placeholder="Informe obrigatoriamente o porquê da anulação (ex: Tutor solicitou reagendamento, pet faltou...)" style="width: 100%; padding: 10px; border: 1px solid #fca5a5; border-radius: 6px; font-family: inherit; font-size: 13px;" [disabled]="cancelandoAcao"></textarea>
+        </div>
+        <div style="display: flex; gap: 10px; margin-top: 10px;">
+          <button type="button" class="btn-logout" style="background-color: #dc2626; color: white; border-color: #dc2626; flex: 1; padding: 10px;" (click)="confirmarCancelamentoBalcao()" [disabled]="cancelandoAcao || !justificativaCancelamento.trim()">
+            Confirmar Cancelamento
+          </button>
+          <button type="button" class="btn-logout" style="background-color: #edf2f7; color: #4a5568; border-color: #cbd5e1;" (click)="exibirFormCancelamento = false" [disabled]="cancelandoAcao">
+            Voltar
+          </button>
+        </div>
+      </div>
+      }
+    </div>
+
+    <div style="margin-top: 24px; display: flex; justify-content: space-between; gap: 12px;">
+      @if ($any(agendamentoSelecionadoDetalhe.status) === 'AGENDADO' && !exibirFormCancelamento && (perfilUsuario === 'RECEPCIONISTA' || perfilUsuario === 'ADMIN' || perfilUsuario === 'GESTOR')) {
+      <button type="button" class="btn-logout" style="background-color: #fee2e2; color: #b91c1c; border-color: #fecaca; padding: 10px 16px;" (click)="exibirFormCancelamento = true">
+        Cancelar Agendamento
+      </button>
+      } @else {
+      <div></div>
+      }
+
+      @if (!cancelandoAcao) {
+      <button type="button" class="btn-primary" style="padding: 10px 20px; background-color: #475569; border-color: #475569;" (click)="fecharModalDetalhes()">Fechar Janela</button>
+      }
+    </div>
+
+  </div>
+</div>
+}

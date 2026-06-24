@@ -1,0 +1,13 @@
+export * from './agendamentos.service';
+import { AgendamentosService } from './agendamentos.service';
+export * from './animais.service';
+import { AnimaisService } from './animais.service';
+export * from './autenticacao.service';
+import { AutenticacaoService } from './autenticacao.service';
+export * from './clinicas.service';
+import { ClinicasService } from './clinicas.service';
+export * from './tutores.service';
+import { TutoresService } from './tutores.service';
+export * from './usuarios.service';
+import { UsuariosService } from './usuarios.service';
+export const APIS = [AgendamentosService, AnimaisService, AutenticacaoService, ClinicasService, TutoresService, UsuariosService];

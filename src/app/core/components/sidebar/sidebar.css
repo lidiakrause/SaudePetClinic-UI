@@ -1,0 +1,91 @@
+/* src/app/core/components/sidebar/sidebar.css */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 260px;
+  background-color: #1e293b;
+  height: 100vh;
+  padding: 24px 16px;
+  box-sizing: border-box;
+  overflow-y: auto;
+  font-family: sans-serif;
+  z-index: 100;
+}
+
+.menu-section {
+  margin-bottom: 24px;
+}
+
+.section-title {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #94a3b8; /* Cinza claro para títulos de seção */
+  font-weight: 700;
+  margin: 0 0 8px 12px;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar li {
+  margin-bottom: 4px;
+}
+
+.sidebar a {
+  display: block;
+  color: #cbd5e1;
+  text-decoration: none;
+  padding: 10px 12px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+/* Efeito Hover */
+.sidebar a:hover {
+  background-color: #334155;
+  color: #ffffff;
+}
+
+/* Estilo do link ativo da página onde o usuário está */
+.sidebar a.active {
+  background-color: #3b82f6; /* Azul destaque */
+  color: #ffffff;
+  font-weight: 600;
+  box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.2);
+}
+
+/* Container do Cabeçalho da Marca na Sidebar */
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  /* Mantém 15px nas laterais, 18px embaixo, e reduz o topo para 5px */
+  padding: 2px 15px 18px 15px;
+
+  border-bottom: 1px solid #e2e8f0;
+  margin-bottom: 15px;
+}
+
+/* Tamanho e comportamento do Ícone SVG */
+.sidebar-logo-icon {
+  width: 32px;                /* Um pouco menor que o da tela de login para casar com a barra */
+  height: 32px;
+  object-fit: contain;
+}
+
+/* Estilo do Texto do Nome da Marca na Barra */
+.sidebar-brand-name {
+  font-size: 18px;
+  font-weight: 700;
+  color: #F5F4EB;             /* Cor escura premium sólida */
+  letter-spacing: -0.3px;     /* Ajuste fino de proximidade de letras */
+  white-space: nowrap;        /* Impede que o nome quebre em duas linhas */
+}

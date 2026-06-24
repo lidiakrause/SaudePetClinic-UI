@@ -1,0 +1,141 @@
+<div class="page-header">
+  <h1>Painel de Atendimento Clínico</h1>
+  <p>Monitore os agendamentos e faça o encerramento seguro das consultas</p>
+</div>
+
+@if (erro) { <p class="msg-erro">{{ erro }}</p> }
+@if (sucesso) { <p class="msg-sucesso">{{ sucesso }}</p> }
+
+@if (!isVeterinario) {
+<div class="card" style="margin-bottom: 20px; display: flex; align-items: center; gap: 15px; padding: 15px;">
+  <label for="filtroVet" style="font-weight: 600; color: #334155; font-size: 14px;">Filtrar Fila por Médico:</label>
+  <select id="filtroVet" [(ngModel)]="idVetFiltro" (change)="carregarAtendimentos()" style="padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; min-width: 250px; background-color: #fff;">
+    @for (vet of veterinarios; track vet.idUsuario) {
+    <option [value]="vet.idUsuario">{{ vet.nome }}</option>
+    }
+  </select>
+</div>
+}
+
+<div style="display: grid; grid-template-columns: 1.1fr 1fr; gap: 24px; align-items: start;">
+
+  <div class="card" style="margin: 0;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 2px solid #f1f5f9; padding-bottom: 10px;">
+      <h2 style="font-size: 16px; margin: 0;">Agendamentos de Hoje</h2>
+      <span style="font-size: 12px; font-weight: bold; background-color: #eff6ff; color: #1e40af; padding: 4px 10px; border-radius: 12px;">
+        {{ dataHoje | date:'dd/MM/yyyy' }}
+      </span>
+    </div>
+
+    @if (carregando) {
+    <p class="vazio">Buscando lista do dia...</p>
+    } @else {
+    @if (atendimentosDoDia.length > 0) {
+    <div style="display: flex; flex-direction: column; gap: 12px;">
+      @for (item of atendimentosDoDia; track item.idAgendamento) {
+      <div
+        [style.border-left-color]="$any(item.status) === 'FINALIZADO' ? '#16a34a' : ($any(item.status) === 'CANCELADO' ? '#ef4444' : '#2563eb')"
+        style="border-left: 5px solid #cbd5e1; padding: 12px; background: #f8fafc; border-radius: 0 8px 8px 0; display: flex; justify-content: space-between; align-items: center; border: 1px solid #e2e8f0; border-left-width: 5px;"
+      >
+        <div (click)="abrirModalDetalhes(item)" style="cursor: pointer; flex: 1; padding-right: 10px;">
+          <div style="font-size: 15px; font-weight: 700; color: #0f172a;">
+            {{ item.hora }} {{ item.nomeAnimal }}
+          </div>
+          <div style="font-size: 12px; color: #64748b; margin-top: 4px;">
+            Médico: {{ item.nomeVeterinario }} | Status: <strong>{{ item.status }}</strong>
+          </div>
+        </div>
+
+        <div>
+          @if ($any(item.status) === 'AGENDADO') {
+          <button type="button" class="btn-primary" style="padding: 6px 12px; font-size: 12px;" (click)="focarAtendimento(item)">
+            Gerenciar
+          </button>
+          }
+          @if ($any(item.status) === 'FINALIZADO') {
+          <button type="button" class="btn-primary" style="padding: 6px 12px; font-size: 12px; background-color: #e2e8f0; color: #334155; border-color: #cbd5e1;" (click)="abrirModalDetalhes(item)">Ver Notas</button>
+          }
+          @if ($any(item.status) === 'CANCELADO') {
+          <button type="button" class="btn-primary" style="padding: 6px 12px; font-size: 12px; background-color: #ffeeee; color: #b91c1c; border-color: #fecaca;" (click)="abrirModalDetalhes(item)">Ver Motivo</button>
+          }
+        </div>
+      </div>
+      }
+    </div>
+    } @else {
+    <p class="vazio">Nenhum agendamento para este profissional hoje.</p>
+    }
+    }
+  </div>
+
+  <div>
+    @if (atendimentoEmFoco) {
+    <div class="card" style="margin: 0; border: 2px solid #64748b; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #f1f5f9; padding-bottom: 12px; margin-bottom: 15px;">
+        <div>
+          <h2 style="font-size: 17px; color: #0f172a; margin: 0;">Concluir Atendimento</h2>
+          <p style="font-size: 13px; color: #475569; margin: 4px 0 0 0;">Paciente: <strong>{{ atendimentoEmFoco.nomeAnimal }}</strong> (Horário: {{ atendimentoEmFoco.hora }})</p>
+        </div>
+        <button type="button" style="background: transparent; border: none; font-size: 18px; cursor: pointer; color: #94a3b8;" (click)="cancelarFoco()">✕</button>
+      </div>
+
+      <div class="campo">
+        <label for="anotacoes" style="font-weight: 700; color: #0f172a;">Anotações Clínicas / Justificativa <span style="color: #ef4444;">*</span></label>
+        <textarea id="anotacoes" name="anotacoes" [(ngModel)]="anotacoesAcao" rows="8" placeholder="Insira obrigatoriamente as observações clínicas ou o motivo do cancelamento..." style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-family: inherit; font-size: 14px;" [disabled]="salvandoAcao"></textarea>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px;">
+        <div style="display: flex; gap: 12px;">
+          <button type="button" class="btn-primary" style="background-color: #16a34a; border-color: #16a34a; flex: 1; padding: 12px;" (click)="alterarStatusComAnotacoes('FINALIZADO')" [disabled]="salvandoAcao || !anotacoesAcao.trim()">Finalizar Consulta</button>
+          <button type="button" class="btn-logout" style="background-color: #ef4444; color: white; border-color: #ef4444; flex: 1; padding: 12px;" (click)="alterarStatusComAnotacoes('CANCELADO')" [disabled]="salvandoAcao || !anotacoesAcao.trim()">Cancelar Agendamento</button>
+        </div>
+        <button type="button" class="btn-logout" style="background-color: #edf2f7; color: #4a5568; border-color: #cbd5e1; width: 100%;" (click)="cancelarFoco()" [disabled]="salvandoAcao">Fechar Painel</button>
+      </div>
+    </div>
+    } @else {
+    <div class="card" style="margin: 0; border: 2px dashed #cbd5e1; background: #f8fafc; text-align: center; padding: 60px 20px; color: #64748b;">
+      <h3 style="font-size: 15px; font-weight: 700; color: #334155; margin: 0 0 6px 0;">Nenhum agendamento selecionado</h3>
+      <p style="font-size: 13px; max-width: 280px; margin: 0 auto;">Clique em "Gerenciar" ou no nome do paciente para analisar as informações.</p>
+    </div>
+    }
+  </div>
+</div>
+
+@if (exibirModalDetalhes && agendamentoSelecionadoDetalhe) {
+<div style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(15, 23, 42, 0.6); display: flex; justify-content: center; align-items: center; z-index: 9999; backdrop-filter: blur(4px);">
+  <div class="card" style="width: 550px; margin: 0; padding: 24px; border-radius: 12px; box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.15); border: 1px solid #e2e8f0;">
+
+    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f1f5f9; padding-bottom: 12px; margin-bottom: 16px;">
+      <h3 style="font-size: 18px; font-weight: 700; color: #0f172a; margin: 0;">Ficha Informativa do Agendamento</h3>
+      <button type="button" style="background: transparent; border: none; font-size: 20px; cursor: pointer; color: #94a3b8;" (click)="fecharModalDetalhes()">✕</button>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 12px; font-size: 14px; color: #334155;">
+      <div><strong>Paciente:</strong> {{ agendamentoSelecionadoDetalhe.nomeAnimal }} (ID: #{{ agendamentoSelecionadoDetalhe.idAnimal }})</div>
+      <div><strong>Médico Veterinário:</strong> {{ agendamentoSelecionadoDetalhe.nomeVeterinario }}</div>
+      <div><strong>Data da Consulta:</strong> {{ agendamentoSelecionadoDetalhe.data | date:'dd/MM/yyyy' }}</div>
+      <div><strong>Horário Agendado:</strong> {{ agendamentoSelecionadoDetalhe.hora }}</div>
+
+      <div><strong>Status do Prontuário:</strong>
+        <span [style.background-color]="$any(agendamentoSelecionadoDetalhe.status) === 'FINALIZADO' ? '#dcfce7' : ($any(agendamentoSelecionadoDetalhe.status) === 'CANCELADO' ? '#fee2e2' : '#e0f2fe')"
+              [style.color]="$any(agendamentoSelecionadoDetalhe.status) === 'FINALIZADO' ? '#15803d' : ($any(agendamentoSelecionadoDetalhe.status) === 'CANCELADO' ? '#b91c1c' : '#0369a1')"
+              style="padding: 4px 10px; border-radius: 12px; font-weight: 700; font-size: 12px; margin-left: 6px;">
+            {{ agendamentoSelecionadoDetalhe.status }}
+          </span>
+      </div>
+
+      <div style="margin-top: 10px; padding: 12px; background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px;">
+        <strong style="color: #0f172a; display: block; margin-bottom: 6px;">Evolução Clínica / Observações:</strong>
+        <p style="margin: 0; line-height: 1.5; color: #475569; white-space: pre-wrap; font-style: {{ agendamentoSelecionadoDetalhe.anotacoes ? 'normal' : 'italic' }}">
+          {{ agendamentoSelecionadoDetalhe.anotacoes || 'Nenhuma anotação registrada para este atendimento.' }}
+        </p>
+      </div>
+    </div>
+
+    <div style="margin-top: 20px; text-align: right;">
+      <button type="button" class="btn-primary" style="padding: 10px 20px;" (click)="fecharModalDetalhes()">Fechar Ficha</button>
+    </div>
+
+  </div>
+</div>
+}

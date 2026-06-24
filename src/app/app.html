@@ -1,24 +1,15 @@
-<div class="page-layout">
-  
-  <aside class="sidebar" *ngIf="exibirMenu()">
-    <div class="sidebar-logo">
-      <span>🐾</span> SaúdePet Clinic
-    </div>
-    
-    <nav class="sidebar-nav">
-      <a style="cursor: pointer;" (click)="navegar('/home')">📊 Dashboard</a>
-      <a style="cursor: pointer;" (click)="navegar('/tutor')">👥 Tutores</a>
-      <a style="cursor: pointer;" (click)="navegar('/animal')">🐱 Animais</a>
-      <a style="cursor: pointer;" (click)="navegar('/agendamento')">📅 Agendamentos</a>
-    </nav>
+<div *ngIf="!exibirMenu()">
+  <router-outlet></router-outlet>
+</div>
 
-    <button class="btn-sair" (click)="navegar('/')" style="text-align: center; margin-top: auto; display: block; width: calc(100% - 24px);">
-      🚪 Desconectar
-    </button>
-  </aside>
+<div *ngIf="exibirMenu()" class="app-container">
+  <app-topbar></app-topbar>
 
-  <main class="page-content" [style.margin-left]="exibirMenu() ? 'var(--sidebar-w)' : '0'">
-    <router-outlet></router-outlet>
-  </main>
+  <div class="app-body">
+    <app-sidebar></app-sidebar>
 
+    <main class="main-content">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
 </div>

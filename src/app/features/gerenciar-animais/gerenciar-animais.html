@@ -1,0 +1,194 @@
+<div class="page-header">
+  <h1>Gerenciar Animais</h1>
+  <p>Cadastre e gerencie os pacientes da clínica veterinária</p>
+</div>
+
+@if (!idClinicaSelecionada) {
+<div class="card" style="text-align: center; padding: 40px 20px;">
+  <p class="vazio" style="font-size: 16px; color: #e11d48; font-weight: bold;">
+    Nenhuma Clínica Selecionada
+  </p>
+  <p style="color: #64748b; margin-top: 8px;">
+    Por favor, selecione ou acesse uma unidade antes de prosseguir com o gerenciamento de pacientes.
+  </p>
+</div>
+} @else {
+
+<div style="margin-bottom: 20px; font-size: 14px; color: #475569;">
+  Pacientes da unidade: <strong style="color: #0f172a;">{{ nomeClinicaSelecionada }}</strong>
+</div>
+
+@if (erro) { <p class="msg-erro">{{ erro }}</p> }
+@if (sucesso) { <p class="msg-sucesso">{{ sucesso }}</p> }
+
+@if (exibirFormulario) {
+<div class="card">
+  <h2>{{ modoEdicao ? 'Editar Paciente' : 'Adicionar Novo Paciente' }}</h2>
+
+  <form (ngSubmit)="salvar()" #form="ngForm">
+    <div class="form-grid">
+
+      <div class="campo">
+        <label for="nome">Nome do Animal</label>
+        <input
+          type="text" id="nome" name="nome"
+          [(ngModel)]="nome" placeholder="Ex: Thor, Bolinha" required
+        />
+      </div>
+
+      <div class="campo" style="position: relative;">
+        <label for="tutorBusca">Tutor Responsável</label>
+        <input
+          type="text"
+          id="tutorBusca"
+          name="tutorBusca"
+          autocomplete="off"
+          [(ngModel)]="termoBuscaTutor"
+          (input)="filtrarTutoresDinamico()"
+          placeholder="Digite o nome ou CPF do tutor..."
+          required
+        />
+
+        @if (exibirDropdownTutores && sugestoesTutores.length > 0) {
+        <ul style="
+      position: absolute;
+      top: 100%;
+      left: 0;
+      width: 100%;
+      background: white;
+      border: 1px solid #cbd5e1;
+      z-index: 50;
+      max-height: 180px;
+      overflow-y: auto;
+      list-style: none;
+      padding: 0;
+      margin: 4px 0 0 0;
+      border-radius: 6px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    ">
+          @for (tutor of sugestoesTutores; track tutor.idTutor) {
+          <li
+            (click)="selecionarTutorDropdown(tutor)"
+            style="padding: 10px 12px; cursor: pointer; border-bottom: 1px solid #f1f5f9; font-size: 14px; transition: background 0.2s;"
+            onmouseover="this.style.backgroundColor='#f8fafc'"
+            onmouseout="this.style.backgroundColor='white'"
+          >
+            <div style="font-weight: 600; color: #1e293b;">{{ tutor.nome }}</div>
+            <div style="font-size: 12px; color: #64748b;">CPF: {{ tutor.cpf }} | Telefone: {{ tutor.telefone }}</div>
+          </li>
+          }
+        </ul>
+        }
+      </div>
+
+      <div class="campo">
+        <label for="especie">Espécie</label>
+        <select id="especie" name="especie" [(ngModel)]="especie" required style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; background-color: #fff;">
+          <option value="CACHORRO">Cachorro</option>
+          <option value="GATO">Gato</option>
+          <option value="AVE">Ave</option>
+          <option value="OUTRO">Outro</option>
+        </select>
+      </div>
+
+      <div class="campo">
+        <label for="raca">Raça</label>
+        <input
+          type="text" id="raca" name="raca"
+          [(ngModel)]="raca" placeholder="Ex: Labrador, Vira-lata"
+        />
+      </div>
+
+      <div class="campo">
+        <label for="sexo">Sexo</label>
+        <select id="sexo" name="sexo" [(ngModel)]="sexo" required style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; background-color: #fff;">
+          <option value="MACHO">Macho</option>
+          <option value="FEMEA">Fêmea</option>
+        </select>
+      </div>
+
+      <div class="campo">
+        <label for="peso">Peso (kg)</label>
+        <input
+          type="number" id="peso" name="peso" step="0.01"
+          [(ngModel)]="peso" placeholder="Ex: 12.5"
+        />
+      </div>
+    </div>
+
+    <div class="form-actions" style="display: flex; gap: 12px; margin-top: 20px;">
+      <button type="submit" class="btn-primary" [disabled]="salvando">
+        {{ salvando ? 'Salvando...' : (modoEdicao ? 'Salvar Alterações' : 'Cadastrar Paciente') }}
+      </button>
+      <button type="button" class="btn-logout" style="background-color: #edf2f7; color: #4a5568; border-color: #cbd5e1;" (click)="cancelar()" [disabled]="salvando">
+        Cancelar
+      </button>
+    </div>
+  </form>
+</div>
+}
+
+@if (!exibirFormulario) {
+<div class="card">
+  <button type="button" class="btn-primary" (click)="novoAnimal()">
+    Novo Paciente
+  </button>
+</div>
+}
+
+<div class="card">
+  <h2>Pacientes Ativos</h2>
+
+  @if (carregando) {
+  <p class="vazio">Buscando dados no servidor...</p>
+  } @else {
+  @if (animais.length > 0) {
+  <table>
+    <thead>
+    <tr>
+      <th style="width: 50px; text-align: center;">ID</th>
+      <th>Nome</th>
+      <th>Espécie/Raça</th>
+      <th>Sexo</th>
+      <th>Peso</th>
+      <th>Nome do Tutor</th>
+      <th>Ações</th>
+    </tr>
+    </thead>
+    <tbody>
+    @for (animal of animais; track animal.idAnimal) {
+    <tr>
+      <td style="text-align: center; font-weight: bold; color: #64748b;">
+        #{{ animal.idAnimal }}
+      </td>
+      <td style="font-weight: 600; color: #0f172a;">{{ animal.nome }}</td>
+      <td>{{ animal.especie }} — {{ animal.raca || 'S/R' }}</td>
+      <td>
+            <span [style.background-color]="animal.sexo === 'MACHO' ? '#e0f2fe' : '#fce7f3'"
+                  [style.color]="animal.sexo === 'MACHO' ? '#0369a1' : '#be185d'"
+                  style="padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600;">
+              {{ animal.sexo }}
+            </span>
+      </td>
+      <td>{{ animal.peso ? (animal.peso + ' kg') : '—' }}</td>
+      <td style="font-weight: 500; color: #334155;">
+        {{ getDescricaoTutor(animal.idTutor) }}
+      </td>
+      <td style="display: flex; gap: 8px;">
+        <button type="button" class="btn-primary" style="padding: 6px 14px; font-size: 13px;" (click)="editarAnimal(animal)">
+          Editar
+        </button>
+        <button type="button" class="btn-logout" [disabled]="excluindoId === animal.idAnimal" (click)="excluir(animal)">
+          {{ excluindoId === animal.idAnimal ? 'Removendo...' : 'Excluir' }}
+        </button>
+      </td>
+    </tr>
+    }
+    </tbody>
+  </table>
+  } @else {
+  <p class="vazio">Nenhum paciente cadastrado nesta unidade.</p>
+  }
+  }
+</div>
+}

@@ -1,0 +1,115 @@
+<div class="page-header">
+  <h1>Gerenciar Clínicas</h1>
+  <p>Cadastre, edite e remova unidades do sistema</p>
+</div>
+
+@if (erro) { <p class="msg-erro">{{ erro }}</p> }
+@if (sucesso) { <p class="msg-sucesso">{{ sucesso }}</p> }
+
+@if (exibirFormulario) {
+<div class="card">
+  <h2>{{ modoEdicao ? 'Editar Clínica' : 'Nova Clínica' }}</h2>
+
+  <form (ngSubmit)="salvar()" #form="ngForm">
+    <div class="form-grid">
+
+      <div class="campo">
+        <label for="cnpj">CNPJ</label>
+        <input
+          type="text" id="cnpj" name="cnpj"
+          [(ngModel)]="cnpj" (input)="formatarCnpj()"
+          placeholder="00.000.000/0000-00" maxlength="18" required
+        />
+      </div>
+
+      <div class="campo">
+        <label for="razaoSocial">Razão Social</label>
+        <input
+          type="text" id="razaoSocial" name="razaoSocial"
+          [(ngModel)]="razaoSocial" placeholder="Ex: Nome Oficial LTDA" required
+        />
+      </div>
+
+      <div class="campo">
+        <label for="nomeFantasia">Nome Fantasia</label>
+        <input
+          type="text" id="nomeFantasia" name="nomeFantasia"
+          [(ngModel)]="nomeFantasia" placeholder="Ex: Nome Popular (opcional)"
+        />
+      </div>
+    </div>
+
+    <div class="form-actions" style="display: flex; gap: 12px; margin-top: 20px;">
+      <button type="submit" class="btn-primary" [disabled]="salvando">
+        {{ salvando ? 'Salvando...' : (modoEdicao ? 'Confirmar Alterações' : 'Cadastrar Unidade') }}
+      </button>
+      <button type="button" class="btn-logout" style="background-color: #edf2f7; color: #4a5568; border-color: #cbd5e1;" (click)="cancelar()" [disabled]="salvando">
+        Cancelar
+      </button>
+    </div>
+  </form>
+</div>
+}
+
+@if (!exibirFormulario) {
+<div class="card">
+  <button type="button" class="btn-primary" (click)="novaClinica()">
+    Nova Clínica
+  </button>
+</div>
+}
+
+<div class="card">
+  <h2>Clínicas Cadastradas</h2>
+
+  @if (carregando) {
+  <p class="vazio">Buscando dados no servidor...</p>
+  } @else {
+  @if (clinicas.length > 0) {
+  <table>
+    <thead>
+    <tr>
+      <th style="width: 50px; text-align: center;">ID</th>
+      <th>CNPJ</th>
+      <th>Razão Social</th>
+      <th>Nome Fantasia</th>
+      <th>Ações</th>
+    </tr>
+    </thead>
+    <tbody>
+    @for (clinica of clinicas; track clinica.idClinica) {
+    <tr [style.background-color]="clinicaAcessadaId === clinica.idClinica ? '#f0fdf4' : 'transparent'">
+      <td style="text-align: center; font-weight: bold; color: #64748b;">
+        #{{ clinica.idClinica }}
+      </td>
+      <td>{{ clinica.cnpj }}</td>
+      <td>{{ clinica.razaoSocial }}</td>
+      <td>{{ clinica.nomeFantasia || '—' }}</td>
+      <td style="display: flex; gap: 8px;">
+
+        <button
+          type="button"
+          class="btn-primary"
+          style="padding: 6px 14px; font-size: 13px; background-color: #10b981; border-color: #10b981; min-width: 90px;"
+          [disabled]="clinicaAcessadaId === clinica.idClinica"
+          (click)="acessarClinica(clinica)">
+          {{ clinicaAcessadaId === clinica.idClinica ? 'Acessada' : 'Acessar' }}
+        </button>
+
+        <button type="button" class="btn-primary" style="padding: 6px 14px; font-size: 13px;" (click)="editarClinica(clinica)">
+          Editar
+        </button>
+
+        <button type="button" class="btn-logout" [disabled]="excluindoId === clinica.idClinica" (click)="excluir(clinica)">
+          {{ excluindoId === clinica.idClinica ? 'Removendo...' : 'Excluir' }}
+        </button>
+      </td>
+    </tr>
+    }
+    </tbody>
+  </table>
+  } @else {
+  <p class="vazio">Nenhum registro encontrado no sistema.</p>
+  }
+  }
+</div>

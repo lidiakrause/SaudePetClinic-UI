@@ -1,0 +1,162 @@
+<div class="page-header">
+  <h1>Gerenciar Funcionários</h1>
+  <p>Cadastre e gerencie a equipe de veterinários e recepcionistas</p>
+</div>
+
+@if (!idClinicaSelecionada) {
+<div class="card" style="text-align: center; padding: 40px 20px;">
+  <p class="vazio" style="font-size: 16px; color: #e11d48; font-weight: bold;">Nenhuma Clínica Selecionada</p>
+  <p style="color: #64748b; margin-top: 8px;">Por favor, selecione uma unidade antes de prosseguir.</p>
+</div>
+} @else {
+
+<div style="margin-bottom: 20px; font-size: 14px; color: #475569;">
+  Equipe vinculada à unidade: <strong style="color: #0f172a;">{{ nomeClinicaSelecionada }}</strong>
+</div>
+
+@if (erro) { <p class="msg-erro">{{ erro }}</p> }
+@if (sucesso) { <p class="msg-sucesso">{{ sucesso }}</p> }
+
+@if (exibirFormulario) {
+<div class="card">
+  <h2>{{ modoEdicao ? 'Editar Integrante da Equipe' : 'Adicionar Novo Funcionário' }}</h2>
+
+  <form (ngSubmit)="salvar()" #form="ngForm">
+    <div class="form-grid">
+
+      <div class="campo">
+        <label for="cpf">CPF</label>
+        <input type="text" id="cpf" name="cpf" [(ngModel)]="cpf" (input)="formatarCpf()" placeholder="000.000.000-00" maxlength="14" required />
+      </div>
+
+      <div class="campo">
+        <label for="nome">Nome Completo</label>
+        <input type="text" id="nome" name="nome" [(ngModel)]="nome" placeholder="Ex: Dra. Ana Costa" required />
+      </div>
+
+      <div class="campo">
+        <label for="perfil">Cargo / Função</label>
+        <select id="perfil" name="perfil" [(ngModel)]="perfilSelecionado" required style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; background-color: #fff;">
+          <option value="VETERINARIO">Veterinário(a)</option>
+          <option value="RECEPCIONISTA">Recepcionista</option>
+        </select>
+      </div>
+
+      <div class="campo">
+        <label for="senha">Senha {{ modoEdicao ? '(Deixe em branco para manter a atual)' : '' }}</label>
+        <input type="password" id="senha" name="senha" [(ngModel)]="senha" placeholder="Senha de acesso" [required]="!modoEdicao" />
+      </div>
+    </div>
+
+    @if (perfilSelecionado === 'VETERINARIO') {
+    <div style="margin-top: 25px; padding-top: 20px; border-top: 2px dashed #e2e8f0;">
+      <h3 style="font-size: 16px; font-weight: 600; color: #0f172a; margin-bottom: 15px;">Informações Profissionais e Escala Horária</h3>
+
+      <div class="form-grid">
+        <div class="campo">
+          <label for="crmv">Número do CRMV</label>
+          <input type="text" id="crmv" name="crmv" [(ngModel)]="crmv" placeholder="Ex: CRMV-PR 12345" required />
+        </div>
+
+        <div class="campo">
+          <label for="telefone">Telefone de Contato (Opcional)</label>
+          <input type="text" id="telefone" name="telefone" [(ngModel)]="telefone" (input)="formatarTelefone()" placeholder="(00) 00000-0000" maxlength="15" />
+        </div>
+
+        <div class="campo">
+          <label for="horarioInicio">Horário de Início do Turno</label>
+          <input type="time" id="horarioInicio" name="horarioInicio" [(ngModel)]="horarioInicio" required />
+        </div>
+
+        <div class="campo">
+          <label for="horarioFim">Horário de Término do Turno</label>
+          <input type="time" id="horarioFim" name="horarioFim" [(ngModel)]="horarioFim" required />
+        </div>
+
+        <div class="campo" style="display: flex; flex-direction: column; justify-content: center; gap: 8px; padding-top: 15px; grid-column: span 2;">
+          <label style="display: flex; align-items: center; gap: 8px; font-weight: normal; cursor: pointer; font-size: 14px; color: #334155;">
+            <input type="checkbox" name="atendeSabado" [(ngModel)]="atendeSabado" style="width: 16px; height: 16px;" />
+            Permitir a marcação de consultas para este profissional aos <strong>Sábados</strong>
+          </label>
+          <label style="display: flex; align-items: center; gap: 8px; font-weight: normal; cursor: pointer; font-size: 14px; color: #334155;">
+            <input type="checkbox" name="atendeDomingo" [(ngModel)]="atendeDomingo" style="width: 16px; height: 16px;" />
+            Permitir a marcação de consultas para este profissional aos <strong>Domingos</strong>
+          </label>
+        </div>
+      </div>
+    </div>
+    }
+
+    <div class="form-actions" style="display: flex; gap: 12px; margin-top: 25px;">
+      <button type="submit" class="btn-primary" [disabled]="salvando">
+        {{ salvando ? 'Salvando...' : (modoEdicao ? 'Salvar Alterações' : 'Cadastrar Funcionário') }}
+      </button>
+      <button type="button" class="btn-logout" style="background-color: #edf2f7; color: #4a5568; border-color: #cbd5e1;" (click)="cancelar()" [disabled]="salvando">
+        Cancelar
+      </button>
+    </div>
+  </form>
+</div>
+}
+
+@if (!exibirFormulario) {
+<div class="card">
+  <button type="button" class="btn-primary" (click)="novoFuncionario()">Novo Funcionário</button>
+</div>
+}
+
+<div class="card">
+  <h2>Funcionários Ativos</h2>
+
+  @if (carregando) {
+  <p class="vazio">Buscando dados da equipe no servidor...</p>
+  } @else {
+  @if (funcionarios.length > 0) {
+  <table>
+    <thead>
+    <tr>
+      <th style="width: 50px; text-align: center;">ID</th>
+      <th>CPF</th>
+      <th>Nome</th>
+      <th>Cargo</th>
+      <th>Documento / Escala</th>
+      <th>Ações</th>
+    </tr>
+    </thead>
+    <tbody>
+    @for (func of funcionarios; track func.idUsuario) {
+    <tr>
+      <td style="text-align: center; font-weight: bold; color: #64748b;">#{{ func.idUsuario }}</td>
+      <td>{{ func.cpf }}</td>
+      <td>{{ func.nome }}</td>
+      <td>
+            <span [style.background-color]="func.perfil === 'VETERINARIO' ? '#e0f2fe' : '#fef3c7'"
+                  [style.color]="func.perfil === 'VETERINARIO' ? '#0369a1' : '#b45309'"
+                  style="padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600;">
+              {{ func.perfil }}
+            </span>
+      </td>
+      <td>
+        @if (func.perfil === 'VETERINARIO') {
+        <div style="font-size: 13px; color: #1e293b; font-weight: 500;">CRMV: {{ ($any(func)).crmv || 'Não cadastrado' }}</div>
+        <div style="font-size: 11px; color: #64748b; margin-top: 2px;">Exp: {{ ($any(func)).horarioInicio || '08:00' }} às {{ ($any(func)).horarioFim || '18:00' }}</div>
+        } @else {
+        <span style="font-size: 13px; color: #94a3b8; font-style: italic;">N/A</span>
+        }
+      </td>
+      <td style="display: flex; gap: 8px;">
+        <button type="button" class="btn-primary" style="padding: 6px 14px; font-size: 13px;" (click)="editarFuncionario(func)">Editar</button>
+        <button type="button" class="btn-logout" [disabled]="excluindoId === func.idUsuario" (click)="excluir(func)">
+          {{ excluindoId === func.idUsuario ? 'Removendo...' : 'Excluir' }}
+        </button>
+      </td>
+    </tr>
+    }
+    </tbody>
+  </table>
+  } @else {
+  <p class="vazio">Nenhum funcionário cadastrado nesta unidade.</p>
+  }
+  }
+</div>
+}
